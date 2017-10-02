@@ -1,0 +1,17 @@
+13/03/11 Julien Dutheil
+* Fixed code for compatibility with version 2.0.0.
+* Improved cmake files.
+* Experimental modelshave been moved to specific branches.
+* Compiles with -Weffc++ and -Wshadow.
+* Improved a bit the user interface.
+* Added man page and info manual.
+
+23/10/09 Julien Dutheil
+* Added several python scripts for analysing posterior probabilities files.
+
+11/09/09 Julien Dutheil
+* First official release on Gna! .
+
+07/12/07 Julien Dutheil
+* First local SVN version.
+

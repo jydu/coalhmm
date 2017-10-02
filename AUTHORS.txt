@@ -1,0 +1,2 @@
+Julien Dutheil <julien.dutheil@univ-montp2.fr>
+Thomas Mailund <mailund@birc.au.dk>

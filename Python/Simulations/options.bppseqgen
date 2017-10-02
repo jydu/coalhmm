@@ -1,0 +1,53 @@
+# The alphabet to use:
+# DNA, RNA or Protein
+alphabet = DNA
+
+# Input tree to use:
+input.tree.method = multiple
+
+# Print a tree with ids as bootstrap values.
+# This is helpful when setting up complexe non-homogeneous models.
+# Setting this option will cause the program to exit after printing the tree.
+//output.tree.path = LSUrooted_wid.dnd
+
+# Number of sites to simulate:
+number_of_sites =
+
+# The output file:
+output.sequence.file = 
+# The alignment format:
+# Must be one of Mase, Fasta, Phylip, Clustal, DCSE
+output.sequence.format = Fasta
+# Phylip format options:
+# interleaved or sequential:
+output.sequence.format_phylip.order =
+# classic or extended (PAML):
+output.sequence.format_phylip.ext =
+
+# ----------------------------------------------------------------------------------------
+#                                     Model specification
+# ----------------------------------------------------------------------------------------
+
+# Homogeneous model?
+# no => Homogeneous case
+# general => Specify the model by hand.
+nonhomogeneous = no
+
+# Models are described in a separate file.
+# Choose one of the two following examples:
+# Options for homogeneous and one-per_branch models:
+
+# Available models.
+# For proteins, the DCmutt method is used for JTT92 and DSO78.
+# You can use the 'empirical' option to specify another model.
+# JCnuc, K80, T92, HKY85, F84, TN93, JCprot, DSO78, JTT92 or empirical
+# Append +G2001 or +TS98 to the model name to add a covarion model.
+model = GTR(a=1., b=0.14, c=0.24, d=0.24, e=0.34, theta=0.40, theta1=0.50, theta2=0.50)
+
+#If empirical is set, specify the path where to find the model description (in PAML format).
+model_empirical.file = 
+
+# Rate Across Sites variation (not for use with covarion models)
+# gamma or constant
+rate_distribution = Gamma(n=4, alpha=1.24)
+

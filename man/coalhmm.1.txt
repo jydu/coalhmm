@@ -1,0 +1,42 @@
+.TH COALHMM 1 LOCAL
+
+.SH NAME
+
+coalhmm - Performs CoalHMM analysis
+
+.SH SYNOPSIS
+
+.B coalhmm [options]
+
+.SH AVAILABILITY
+
+All UNIX flavors
+
+.SH DESCRIPTION
+
+coalhmm performs several CoalHMM analyses of genomic data.
+
+.SH OPTIONS
+
+CoalHMM uses the general Bio++ syntax for option files.
+You should refer to 'info coalhmm' or to the online manual of coalhmm for a complete list of available options.
+
+.TP 5
+
+--noninteractive
+
+generates output for redirection in a file.
+
+.TP
+
+param=file
+
+reads a file for loading options
+
+.SH AUTHOR
+
+Julien Y. Dutheil
+Thomas Mailund
+Kasper Munch
+Asger Hobolth
+Mikkel H. Schierrup

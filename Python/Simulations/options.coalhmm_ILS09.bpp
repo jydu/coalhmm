@@ -1,0 +1,53 @@
+DATA=sim
+
+alphabet=DNA
+input.sequence.file=$(DATA).fasta
+input.sequence.format=Fasta
+input.sequence.multiparts=no
+input.sequence.sites_to_use=all
+input.sequence.max_gap_allowed=101%
+
+analysis=estimate
+analysis.method=rescaled
+
+coalmethod=ILS(\
+    implementation=09,\
+    nunberOfSpecies=3,\
+    species1='1',\
+    species2='2',\
+    species3='0',\
+    outgroup='outgroup',\
+    tau1=$(tau1),\
+    tau2=$(tau2),\
+    c2=$(c2),\
+    theta1=$(theta1),\
+    theta2=$(theta2),\
+    median=no,\
+    rho=$(rho),\
+    tau.min = 0.0001,\ #These are the minimum value allowed in optimization. You can play with then if some constraint are matched...
+    theta.min = 0.0001,\
+    rho.min = 0.0001,\
+    rho.max = 1000\
+  )
+
+model = GTR(a=1., b=0.14, c=0.24, d=0.24, e=0.34, theta=0.40, theta1=0.50, theta2=0.50)
+rate_distribution = Gamma(n=4, alpha=1.24)
+
+optimize=yes
+optimization.pre=no
+optimization.reparametrization=no
+optimization.method=fullD
+optimization.verbose=2
+optimization.tolerance=0.000001
+optimization.max_number_f_eval=1000000
+optimization.profiler=$(DATA)$(SUFFIX).profile
+optimization.message_handler=$(DATA)$(SUFFIX).messages
+optimization.max_number_iterations=500 
+optimization.ignore_parameter=GTR.a,GTR.b,GTR.c,GTR.d,GTR.e,GTR.theta,GTR.theta1,GTR.theta2
+optimization.final=no
+
+output.posterior.states=
+output.posterior.values=$(DATA)$(SUFFIX).hmm.values.csv
+output.estimated.parameters=$(DATA)$(SUFFIX).params.txt
+output.userfriendly.parameters=$(DATA)$(SUFFIX).user.txt
+

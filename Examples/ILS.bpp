@@ -1,0 +1,125 @@
+# Simulated data.
+# Initial log likelihood should be -841077.84022444451693
+# Final log likelihood should be ca -841057.50289568176959, -841057.50158966262825
+
+DATA=sim
+alphabet=DNA
+input.sequence.multiparts=no #Set to yes if multi-fasta files should be used.
+input.sequence.multiparts.prefix= #A path to be added before all paths in the file list (if they are relative)
+input.sequence.multiparts.reset=yes 
+input.sequence.list= #A text file containing the list of input fasta files, if multiparts=yes
+input.sequence.file=$(DATA).fasta
+input.sequence.format=Fasta
+input.sequence.sites_to_use=all #The all option will replace all gaps by N. See the Bio++ Program Suite manual for other options.
+input.sequence.max_gap_allowed=100% #The all option will replace all gaps by N. See the Bio++ Program Suite manual for other options.
+
+//This is the standard ILS model with the 09 reparametrization:
+coalmethod=ILS(\
+    implementation=09,\
+    numberOfSpecies=3,\
+    parametrization=1,\
+    species1='H',\
+    species2='C',\
+    species3='G',\
+    outgroup=Outgroup,\
+    tau1=0.004,\
+    tau2=0.0015,\
+    c2=0.010,\
+    theta1=0.002,\
+    theta2=0.002,\
+    median=no,\
+    rho=0.2,\
+    tau.min = 0.0001,\ #These are the minimum value allowed in optimization. You can play with then if some constraint are matched...
+    theta.min = 0.0001,\
+    rho.min = 0.0001,\
+    rho.max = 1000\
+  )
+
+//This one add a HMM with rates along the genome.
+//The rate distribution should be set in the emission probabilties part.
+//coalmethod=MM(model=ILS(
+//    implementation=09,\
+//    numberOfSpecies=3,\
+//    parametrization=1,\
+//    species1='H',\
+//    species2='C',\
+//    species3='G',\
+//    outgroup=Outgroup,\
+//    tau1=0.004,\
+//    tau2=0.0015,\
+//    c2=0.010,\
+//    theta1=0.002,\
+//    theta2=0.002,\
+//    median=no,\
+//    rho=0.2),\
+//    omega=0.1\
+//  )
+
+//This is the standard ILS model with the 09 reparametrization, with correction for clock departure:
+//coalmethod=Unclock(species='C', error=0.001, model=ILS(\
+//    implementation=09,\
+//    numberOfSpecies=3,\
+//    parametrization=1,\
+//    species1='H',\
+//    species2='C',\
+//    species3='G',\
+//    outgroup=Outgroup,\
+//    tau1=0.004,\
+//    tau2=0.0015,\
+//    c2=0.010,\
+//    theta1=0.002,\
+//    theta2=0.002,\
+//    median=no,\
+//    rho=0.2,\
+//    tau.min = 0.0001,\ #These are the minimum value allowed in optimization. You can play with then if some constraint are matched...
+//    theta.min = 0.0001,\
+//    rho.min = 0.0001,\
+//    rho.max = 1000\
+//  ))
+
+//Emission probabilities options:
+model=GTR(a=1.49, b=0.67, c=0.38, d=0.35, e=0.46, theta=0.52, theta1=0.51, theta2=0.57)
+rate_distribution=Uniform //or eg: Gamma(n=4, alpha=1.0)
+
+//Now perform analysis:
+analysis=estimate
+analysis.method=rescaled //or logsum if one want to use a more numerically accurate, yet slower, forward algorithm.
+                       //lowmem is the same as rescaled, but with smaller memory consumption, yet without posterior decoding computation.
+
+optimize=yes
+optimization.method=fullD
+optimization.reparametrization=no //Transform parameters to be within ]-inf;+inf[ range.
+optimization.verbose=2
+optimization.tolerance=0.000001
+optimization.max_number_f_eval=1000000
+optimization.max_number_iterations=1000
+optimization.profiler=$(DATA).profile
+optimization.message_handler=$(DATA).messages
+
+#With this optimization options, all parameters are estimated in one go:
+//optimization.pre=no
+//optimization.ignore_parameter=
+//optimization.final=yes
+
+#With these options, Substitution model parameters are estimated prior to the coalhmm analysis,
+#using standard phylogenetic methods. If a gamma law is assumed, it is better to estimate
+#alpha together with rho, as these two parameters can be confonded.
+optimization.pre=yes
+optimization.ignore_parameter=GTR.a,GTR.b,GTR.c,GTR.d,GTR.e,GTR.theta,GTR.theta1,GTR.theta2
+optimization.final=yes
+
+#This is just for output file names:
+MODEL=ILS09_GTR_Uniform
+
+METHOD=$(analysis.method)
+output.posterior.states=
+output.posterior.values=$(DATA)-$(MODEL)-$(METHOD).posterior.values.csv
+output.posterior.divergences=$(DATA)-$(MODEL)-$(METHOD).posterior.divergences.csv
+output.estimated.parameters=$(DATA)-$(MODEL)-$(METHOD).params.txt
+output.userfriendly.parameters=$(DATA)-$(MODEL)-$(METHOD).user.txt //can also be std or none
+
+#Parameter variance (warning, this can take a lot of time!):
+output.estimated.hessian=//$(DATA)-$(MODEL)-$(METHOD).params.hessian.mat
+output.estimated.vcv=//$(DATA)-$(MODEL)-$(METHOD).params.vcv.mat
+output.estimated.vcv.select=coal.tau1,coal.tau2,coal.theta1,coal.theta2,coal.rho #or a coma separated list of the parameters for which thte vairance/covariance matrix should be computed. 
+
