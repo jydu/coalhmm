@@ -79,7 +79,7 @@ coalmethod=ILS(\
 
 //Emission probabilities options:
 model=GTR(a=1.49, b=0.67, c=0.38, d=0.35, e=0.46, theta=0.52, theta1=0.51, theta2=0.57)
-rate_distribution=Uniform //or eg: Gamma(n=4, alpha=1.0)
+rate_distribution=Constant //or eg: Gamma(n=4, alpha=1.0)
 
 //Now perform analysis:
 analysis=estimate

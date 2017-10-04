@@ -35,16 +35,24 @@
 #include "CoalHmmSimulator.h"
 
 // From bpp-core:
-#include <Bpp/App.all>
+#include <Bpp/App/BppApplication.h>
+#include <Bpp/App/NumCalcApplicationTools.h>
 #include <Bpp/Text/KeyvalTools.h>
 #include <Bpp/Numeric/Prob/ConstantDistribution.h>
-#include <Bpp/Numeric/Function.all>
+#include <Bpp/Numeric/Function/Functions.h>
+#include <Bpp/Numeric/Function/ReparametrizationFunctionWrapper.h>
+#include <Bpp/Numeric/Function/ThreePointsNumericalDerivative.h>
+#include <Bpp/Numeric/Function/PowellMultiDimensions.h>
 #include <Bpp/Numeric/Matrix/MatrixTools.h>
-#include <Bpp/Numeric/Hmm.all>
+#include <Bpp/Numeric/AutoParameter.h>
+#include <Bpp/Numeric/Hmm/RescaledHmmLikelihood.h>
+#include <Bpp/Numeric/Hmm/LowMemoryRescaledHmmLikelihood.h>
+#include <Bpp/Numeric/Hmm/LogsumHmmLikelihood.h>
 
 // From bpp-seq:
-#include <Bpp/Seq/Alphabet.all>
-#include <Bpp/Seq/Container.all>
+#include <Bpp/Seq/Alphabet/AlphabetTools.h>
+#include <Bpp/Seq/Container/CompressedVectorSiteContainer.h>
+#include <Bpp/Seq/Container/SiteContainerTools.h>
 #include <Bpp/Seq/App/SequenceApplicationTools.h>
 #include <Bpp/Seq/SiteTools.h>
 #include <Bpp/Seq/Io/Fasta.h>
@@ -385,8 +393,8 @@ class IterationCounter: public OptimizationListener
 int main(int argc, char ** argv)
 {
   cout << "******************************************************************" << endl;
-  cout << "*                    CoalHMM, version 1.0.2                      *" << endl;
-  cout << "* Authors: J. Dutheil                       Last Modif. 21/07/15 *" << endl;
+  cout << "*                    CoalHMM, version 1.0.3                      *" << endl;
+  cout << "* Authors: J. Dutheil                       Last Modif. 04/10/17 *" << endl;
   cout << "*          T. Mailund                                            *" << endl;
   cout << "******************************************************************" << endl;
   cout << endl;
@@ -502,7 +510,7 @@ int main(int argc, char ** argv)
     if (hmmalgo == "rescaled")
       hmmLik = new RescaledHmmLikelihood(hAlpha, hModel, hmmEmissions, "");
     else if(hmmalgo == "logsum")
-      hmmLik = new LogsumHmmLikelihood(hAlpha, hModel, hmmEmissions, "");
+      hmmLik = new LogsumHmmLikelihood(hAlpha, hModel, hmmEmissions, true, "");
     else if(hmmalgo == "lowmem")
       hmmLik = new LowMemoryRescaledHmmLikelihood(hAlpha, hModel, hmmEmissions, "");
     else throw Exception("Unknow HMM method, should be 'rescaled', 'logsum' or 'lowmem'.");
@@ -527,7 +535,7 @@ int main(int argc, char ** argv)
     if (optimize)
     {
       ApplicationTools::displayResult("Initial log likelihood", TextTools::toString(-hmmLik->getValue(), 20));
-      size_t optVerbose = ApplicationTools::getParameter<size_t>("optimization.verbose", params, 2);
+      unsigned int optVerbose = ApplicationTools::getParameter<unsigned int>("optimization.verbose", params, 2);
   
       string mhPath = ApplicationTools::getAFilePath("optimization.message_handler", params, false, false);
       OutputStream* messageHandler = 
@@ -569,7 +577,7 @@ int main(int argc, char ** argv)
       itC = new IterationCounter(maxIt); 
       ApplicationTools::displayResult("Maximum number of iterations", maxIt);
     
-      size_t nbEvalMax = ApplicationTools::getParameter<size_t>("optimization.max_number_f_eval", params, 1000000);
+      unsigned int nbEvalMax = ApplicationTools::getParameter<unsigned int>("optimization.max_number_f_eval", params, 1000000);
       ApplicationTools::displayResult("Max # ML evaluations", TextTools::toString(nbEvalMax));
   
       double tolerance = ApplicationTools::getDoubleParameter("optimization.tolerance", params, .000001);
@@ -645,7 +653,7 @@ int main(int argc, char ** argv)
       }
       else if (optMethod == "splitD")
       {
-        size_t nbSteps = ApplicationTools::getParameter<size_t>("optimization.number_of_steps", params, 10);
+        unsigned int nbSteps = ApplicationTools::getParameter<unsigned int>("optimization.number_of_steps", params, 10);
         ApplicationTools::displayResult("Number of steps", TextTools::toString(nbSteps));
  
         ThreePointsNumericalDerivative* fun = new ThreePointsNumericalDerivative(f);
@@ -678,7 +686,7 @@ int main(int argc, char ** argv)
       }
       else if (optMethod == "DB")
       {
-        size_t nbSteps = ApplicationTools::getParameter<size_t>("optimization.number_of_steps", params, 10);
+        unsigned int nbSteps = ApplicationTools::getParameter<unsigned int>("optimization.number_of_steps", params, 10);
         ApplicationTools::displayResult("Number of steps", TextTools::toString(nbSteps));
  
         ThreePointsNumericalDerivative* fun = new ThreePointsNumericalDerivative(f);
@@ -1133,7 +1141,7 @@ int main(int argc, char ** argv)
       ParameterGrid* grid = NumCalcApplicationTools::getParameterGrid(params, "", true, false);
       VVdouble* values = FunctionTools::computeGrid(*hmmLik, *grid);
       ofstream out(likProfPath.c_str(), ios::out);
-      for (size_t i = 0; i < grid->getNumberOfDimensions(); i++)
+      for (unsigned int i = 0; i < grid->getNumberOfDimensions(); i++)
         out << grid->getDimensionName(i) << "\t";
       out << "lnL" << endl;
       for (size_t i = 0; i < values->size(); i++)

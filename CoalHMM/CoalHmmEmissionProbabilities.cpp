@@ -35,21 +35,21 @@ using namespace bpp;
 void AbstractCoalHmmEmissionProbabilities::setData(const bpp::SiteContainer& data) throw (bpp::Exception)
 {
   //Initialize index:
-  unsigned int nbSites = data.getNumberOfSites();
+  size_t nbSites = data.getNumberOfSites();
   siteIndex_.resize(nbSites);
 
   if (! VectorTools::haveSameElements(hiddenAlphabet_->getSpeciesNames(), data.getSequencesNames()))
     throw Exception("AbstractCoalHmmEmissionProbabilities::setData(). Sequence names must be the same as species names in the alphabet, and there should not be any additional sequence.");
   SiteContainer* zipSites = PatternTools::shrinkSiteSet(data);
-  unsigned int nbDistinctSites = zipSites->getNumberOfSites();
+  size_t nbDistinctSites = zipSites->getNumberOfSites();
   ApplicationTools::displayResult("Number of patterns", nbDistinctSites);
 
   ApplicationTools::displayTask("Assigning patterns", true);
-  for (unsigned int i = 0; i < nbSites; i++)
+  for (size_t i = 0; i < nbSites; i++)
   {
     ApplicationTools::displayGauge(i, nbSites - 1, '=');
     const Site* site1 = &data.getSite(i);
-    for (unsigned int ii = 0; ii < nbDistinctSites; ii++)
+    for (size_t ii = 0; ii < nbDistinctSites; ii++)
     {
       if (SiteTools::areSitesIdentical(zipSites->getSite(ii), *site1))
       {

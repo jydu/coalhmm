@@ -85,7 +85,7 @@ class TwoSpeciesDiscretizedCoalHmmTransitionMatrix:
   private:
     void initialize_();
 
-    static inline int idx(int i, int j) { return j * (j + 1) / 2 + i; }
+    static inline size_t idx(size_t i, size_t j) { return j * (j + 1) / 2 + i; }
 };
 
 #endif //_TWOSPECIESDISCRETIZEDCOALHMMTRANSITIONMATRIX_H_

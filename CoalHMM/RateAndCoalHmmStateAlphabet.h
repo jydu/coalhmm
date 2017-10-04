@@ -36,12 +36,12 @@ class RateAndCoalHmmStateAlphabet:
   public bpp::AbstractParametrizable
 {
   public:
-    std::auto_ptr<AverageCoalHmmStateAlphabet> coalHmmAlphabet_;
-    std::auto_ptr<bpp::DiscreteDistribution> rDist_;
+    std::unique_ptr<AverageCoalHmmStateAlphabet> coalHmmAlphabet_;
+    std::unique_ptr<bpp::DiscreteDistribution> rDist_;
     std::vector<bpp::ParameterList> brlenParameters_;
-    unsigned int nbCoalStates_;
-    unsigned int nbRates_;
-    unsigned int nbStates_;
+    size_t nbCoalStates_;
+    size_t nbRates_;
+    size_t nbStates_;
 
   public:
     /**

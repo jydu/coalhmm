@@ -23,7 +23,7 @@
 
 TwoSpeciesWithOutgroupDiscretizedCoalHmmStateAlphabet::TwoSpeciesWithOutgroupDiscretizedCoalHmmStateAlphabet(
     const std::string& species1, const std::string& species2, const std::string& outgroup,
-    double tau1, double tau2, double theta12, unsigned nbClasses, bool useMedian, double minTau1, double minTau2, double minTheta) :
+    double tau1, double tau2, double theta12, size_t nbClasses, bool useMedian, double minTau1, double minTau2, double minTheta) :
   AbstractParametrizable("coal."),
   brlenParameters_(),
   nbClasses_(nbClasses),

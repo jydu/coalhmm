@@ -3,8 +3,12 @@
 # Created: 03/09/2009
 
 # Global parameters
-CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
+CMAKE_MINIMUM_REQUIRED(VERSION 2.8.11)
 PROJECT(coalhmm CXX)
+
+# Compile options
+SET (CMAKE_CXX_FLAGS "-std=c++11 -Wall -Weffc++ -Wshadow -Wconversion -Wno-unused-variable -Wno-unused-function")
+
 
 IF(NOT CMAKE_BUILD_TYPE)
   SET(CMAKE_BUILD_TYPE RelWithDebInfo CACHE STRING
@@ -12,17 +16,6 @@ IF(NOT CMAKE_BUILD_TYPE)
       FORCE)
 ENDIF()
 
-SET(CMAKE_CXX_FLAGS "-Wall -Weffc++ -Wshadow")
-IF(NOT NO_VIRTUAL_COV)
-  SET(NO_VIRTUAL_COV FALSE CACHE BOOL
-      "Disable covariant return type with virtual inheritance, for compilers that do not support it."
-      FORCE)
-ENDIF()
-
-IF(NO_VIRTUAL_COV)
-  MESSAGE("-- Covariant return with virtual inheritance disabled.")
-  SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DNO_VIRTUAL_COV=1")
-ENDIF()
 
 #static linkage?
 IF(NOT BUILD_STATIC)
@@ -35,55 +28,35 @@ IF(BUILD_STATIC)
   SET(CMAKE_CXX_FLAGS "-static -static-libgcc ${CMAKE_CXX_FLAGS}")
 ENDIF()
 
-#build info?
-IF(NOT DEFINED INFO)
-  SET(INFO UNIX)
-ENDIF(NOT DEFINED INFO)
-
-#build man pages?
-IF(NOT DEFINED MAN)
-  SET(MAN UNIX)
-ENDIF(NOT DEFINED MAN)
-
-#find executables for documentation
-FIND_PROGRAM(MAKEINFO_EXE NAMES makeinfo)
-FIND_PROGRAM(PDFTEX_EXE NAMES pdftex)
-FIND_PROGRAM(NROFF_EXE NAMES nroff)
-
-
-#here is a useful function:
-MACRO(IMPROVED_FIND_LIBRARY OUTPUT_LIBS lib_name include_to_find build_static)
-  #start:
-  FIND_PATH(${lib_name}_INCLUDE_DIR ${include_to_find})
-  INCLUDE_DIRECTORIES(${${lib_name}_INCLUDE_DIR})
-
-  IF(${build_static})
-    SET(${lib_name}_STATIC_NAMES lib${lib_name}.a)
-    FIND_LIBRARY(${lib_name}_STATIC_LIBRARY NAMES ${${lib_name}_STATIC_NAMES} PATH_SUFFIXES lib${LIB_SUFFIX})
-    IF(${lib_name}_STATIC_LIBRARY)
-      MESSAGE("-- Library ${lib_name} found here:")
-      MESSAGE("   includes: ${${lib_name}_INCLUDE_DIR}")
-      MESSAGE("   static libraries: ${${lib_name}_STATIC_LIBRARY}")
-    ELSE()
-      MESSAGE(FATAL_ERROR "${lib_name} required but not found.")
-    ENDIF()
-    #add the dependency:
-    SET(${OUTPUT_LIBS} ${${OUTPUT_LIBS}} ${${lib_name}_STATIC_LIBRARY})
-  ELSE()
-    SET(${lib_name}_NAMES ${lib_name} ${lib_name}.lib ${lib_name}.dll)
-    FIND_LIBRARY(${lib_name}_LIBRARY NAMES ${${lib_name}_NAMES} PATH_SUFFIXES lib${LIB_SUFFIX})
-    IF(${lib_name}_LIBRARY)
-      MESSAGE("-- Library ${lib_name} found here:")
-      MESSAGE("   includes: ${${lib_name}_INCLUDE_DIR}")
-      MESSAGE("   dynamic libraries: ${${lib_name}_LIBRARY}")
-    ELSE()
-      MESSAGE(FATAL_ERROR "${lib_name} required but not found.")
-    ENDIF()
-    #add the dependency:
-    SET(${OUTPUT_LIBS} ${${OUTPUT_LIBS}} ${${lib_name}_LIBRARY})
-  ENDIF()
-  
-ENDMACRO(IMPROVED_FIND_LIBRARY)
+# Check compression program
+# COMPRESS_PROGRAM controls the choice of program
+# COMPRESS_EXT can be used to override the file extension
+if (NOT COMPRESS_PROGRAM)
+  set (COMPRESS_PROGRAM gzip CACHE STRING "Set program for compressing documentation" FORCE)
+endif ()
+find_program (COMPRESS_BIN NAMES ${COMPRESS_PROGRAM} DOC "${COMPRESS_PROGRAM} compression program")
+if (NOT COMPRESS_BIN)
+  message (STATUS "${COMPRESS_PROGRAM} program not found, text doc will not be compressed")
+else ()
+  # Deduce COMPRESS_EXT for known compression programs if not set
+  if (NOT COMPRESS_EXT)
+    if (${COMPRESS_PROGRAM} STREQUAL "gzip")
+      set (COMPRESS_EXT "gz")
+    elseif (${COMPRESS_PROGRAM} STREQUAL "bzip2")
+      set (COMPRESS_EXT "bz2")
+    else ()
+      set (COMPRESS_EXT "${COMPRESS_PROGRAM}") # Default: program name (works for xz/lzma)
+    endif ()
+  endif ()
+  # Generate command line args (always add -c to output compressed file to stdout)
+  if (${COMPRESS_PROGRAM} STREQUAL "gzip")
+    # -n for no timestamp in files (reproducible builds)
+    set (COMPRESS_ARGS -c -n)
+  else ()
+    set (COMPRESS_ARGS -c)
+  endif ()
+  message (STATUS "Found ${COMPRESS_BIN} compression program, using file extension .${COMPRESS_EXT}")
+endif ()
 
 # Libtool-like version number
 # CURRENT:REVISION:AGE => file.so.(C-A).A.R
@@ -93,83 +66,47 @@ ENDMACRO(IMPROVED_FIND_LIBRARY)
 #           library implements.
 # In other words, the library implements all the interface numbers in the
 # range from number current - age to current.
-SET(COALHMM_VERSION_CURRENT "1")
-SET(COALHMM_VERSION_REVISION "0")
-SET(COALHMM_VERSION_AGE "0")
+SET(${PROJECT_NAME}_VERSION_CURRENT "1")
+SET(${PROJECT_NAME}_VERSION_REVISION "0")
+SET(${PROJECT_NAME}_VERSION_AGE "0")
 
 # Effective version number computation
-MATH(EXPR COALHMM_VERSION_MAJOR "${COALHMM_VERSION_CURRENT} - ${COALHMM_VERSION_AGE}")
-SET(COALHMM_VERSION_MINOR ${COALHMM_VERSION_AGE})
-SET(COALHMM_VERSION_PATCH ${COALHMM_VERSION_REVISION})
-SET(COALHMM_VERSION "${COALHMM_VERSION_MAJOR}.${COALHMM_VERSION_MINOR}.${COALHMM_VERSION_PATCH}")
+MATH(EXPR ${PROJECT_NAME}_VERSION_MAJOR "${${PROJECT_NAME}_VERSION_CURRENT} - ${${PROJECT_NAME}_VERSION_AGE}")
+SET(${PROJECT_NAME}_VERSION_MINOR ${${PROJECT_NAME}_VERSION_AGE})
+SET(${PROJECT_NAME}_VERSION_PATCH ${${PROJECT_NAME}_VERSION_REVISION})
+SET(${PROJECT_NAME}_VERSION "${${PROJECT_NAME}_VERSION_MAJOR}.${${PROJECT_NAME}_VERSION_MINOR}.${${PROJECT_NAME}_VERSION_PATCH}")
 
-# Set the CMAKE_PREFIX_PATH for the find_library fonction when using non
-# standard install location
+set (PROJECT_VERSION ${${PROJECT_NAME}_VERSION})
+
+# Find dependencies (add install directory to search)
 IF(CMAKE_INSTALL_PREFIX)
   SET(CMAKE_PREFIX_PATH "${CMAKE_INSTALL_PREFIX}" ${CMAKE_PREFIX_PATH})
 ENDIF(CMAKE_INSTALL_PREFIX)
 
-# Find the dynamic libraries (needed in anycase for building libcoalhmm)
-IMPROVED_FIND_LIBRARY(LIBS bpp-phyl Bpp/Phyl/Tree.h 0)
-IMPROVED_FIND_LIBRARY(LIBS bpp-seq Bpp/Seq/Alphabet/Alphabet.h 0)
-IMPROVED_FIND_LIBRARY(LIBS bpp-core Bpp/Clonable.h 0)
+include (GNUInstallDirs)
+find_package (bpp-phyl 11.0.0 REQUIRED)
 
-#If a static exe is to be built, then look for static libraries.
-#Here the order of check is very important, changing it would lead to a linkage error!
-IF(BUILD_STATIC)
-  MESSAGE("-- Checking static version of libaries...")
-  IMPROVED_FIND_LIBRARY(STATIC_LIBS bpp-phyl Bpp/Phyl/Tree.h 1)
-  IMPROVED_FIND_LIBRARY(STATIC_LIBS bpp-seq Bpp/Seq/Alphabet/Alphabet.h 1)
-  IMPROVED_FIND_LIBRARY(STATIC_LIBS bpp-core Bpp/Clonable.h 1)
-ENDIF(BUILD_STATIC)
-
-IF(MAKEINFO_EXE)
-  MESSAGE("-- Found makeinfo here: ${MAKEINFO_EXE}")
-  MESSAGE("   Adding targets: info, html")
-
-  IF(INFO)
-    SET(ADD_INFO_TO "ALL")
-    MESSAGE("   Adding target info to target all")
-  ENDIF(INFO)
-
-  ADD_CUSTOM_TARGET(info
-    ${ADD_INFO_TO}
-    COMMAND ${MAKEINFO_EXE} coalhmm.texi
-    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/doc
-    )
-
-  ADD_CUSTOM_TARGET(html
-    COMMAND ${MAKEINFO_EXE} --html --css-ref=http://www.w3.org/StyleSheets/Core/Steely coalhmm.texi
-    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/doc
-    )
-ENDIF(MAKEINFO_EXE)
-
-IF(PDFTEX_EXE)
-  MESSAGE("-- Found pdftex here: ${PDFTEX_EXE}")
-  MESSAGE("   Adding target: pdf")
-
-  ADD_CUSTOM_TARGET(pdf
-    COMMAND ${PDFTEX_EXE} coalhmm.texi
-    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/doc
-    )
-ENDIF(PDFTEX_EXE)
-
-IF(NROFF_EXE)
-  MESSAGE("-- Found nroff here: ${NROFF_EXE}")
-  MESSAGE("   Adding targets: man")
-
-  ADD_CUSTOM_TARGET(man
-    ALL
-    COMMAND cp coalhmm.1.txt coalhmm.1
-    COMMAND gzip -f coalhmm.1
-    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/man
-    )
-
-ENDIF(NROFF_EXE)
+# CMake package
+set (cmake-package-location ${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME})
+include (CMakePackageConfigHelpers)
+configure_package_config_file (
+  package.cmake.in
+  ${CMAKE_CURRENT_BINARY_DIR}/package.cmake
+  INSTALL_DESTINATION ${cmake-package-location}
+  )
+write_basic_package_version_file (
+  ${CMAKE_CURRENT_BINARY_DIR}/package-version.cmake
+  VERSION ${PROJECT_VERSION}
+  COMPATIBILITY SameMajorVersion
+  )
+install (FILES ${CMAKE_CURRENT_BINARY_DIR}/package.cmake DESTINATION ${cmake-package-location}
+  RENAME ${PROJECT_NAME}-config.cmake)
+install (FILES ${CMAKE_CURRENT_BINARY_DIR}/package-version.cmake DESTINATION ${cmake-package-location}
+  RENAME ${PROJECT_NAME}-config-version.cmake)
 
 # Subdirectories
-ADD_SUBDIRECTORY(CoalHMM)
-ADD_SUBDIRECTORY(Python)
+add_subdirectory(CoalHMM)
+add_subdirectory(Python)
 add_subdirectory(doc)
 add_subdirectory(man)
 
@@ -181,63 +118,25 @@ SET(CPACK_PACKAGE_VERSION_MAJOR "1")
 SET(CPACK_PACKAGE_VERSION_MINOR "0")
 SET(CPACK_PACKAGE_VERSION_PATCH "0")
 SET(CPACK_PACKAGE_DESCRIPTION_SUMMARY "The CoalHMM program and library")
-SET(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_SOURCE_DIR}/COPYING.txt")
-SET(CPACK_RESOURCE_FILE_AUTHORS "${CMAKE_SOURCE_DIR}/AUTHORS.txt")
-SET(CPACK_RESOURCE_FILE_INSTALL "${CMAKE_SOURCE_DIR}/INSTALL.txt")
+SET(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_SOURCE_DIR}/LICENSE")
+SET(CPACK_RESOURCE_FILE_AUTHORS "${CMAKE_SOURCE_DIR}/AUTHORS")
+SET(CPACK_RESOURCE_FILE_INSTALL "${CMAKE_SOURCE_DIR}/INSTALL")
 SET(CPACK_SOURCE_GENERATOR "TGZ")
-SET(CPACK_SOURCE_IGNORE_FILES
- "CMakeFiles"
- "Makefile"
- "_CPack_Packages"
- "CMakeCache.txt"
- ".*\\\\.cmake"
- ".*\\\\.svn"
- ".*\\\\.gz"
- ".*\\\\.zip"
- ".*\\\\.deb"
- ".*\\\\.rpm"
- ".*\\\\..*\\\\.swp"
- ".*stamp"
- "\\\\.sh"
- "CoalHMM/\\\\..*"
- "CoalHMM/coalhmm"
- "doc/coalhmm/"
- "doc/coalhmm\\\\.info"
- "doc/coalhmm\\\\.toc"
- "doc/coalhmm\\\\.vr"
- "doc/coalhmm\\\\.tp"
- "doc/coalhmm\\\\.log"
- "doc/coalhmm\\\\.fn"
- "doc/coalhmm\\\\.ky"
- "doc/coalhmm\\\\.cp"
- "doc/coalhmm\\\\.pg"
- "doc/coalhmm\\\\.aux"
- "doc/coalhmm\\\\.pdf"
- "man/.*\\\\.1.gz"
- "man/.*\\\\.1"
- "debian/coalhmm/"
- "debian/coalhmm\\\\.substvars"
- "debian/coalhmm\\\\.debhelper"
- "debian/debhelper\\\\.log"
- "debian/tmp"
- "\\\\..*\\\\.swp"
- "Examples/\\\\..*"
- "Python/\\\\..*"
- ${CPACK_SOURCE_IGNORE_FILES}
-)
-IF (MACOS)
-  SET(CPACK_GENERATOR "Bundle")
-ENDIF()
+# /!\ This assumes that an external build is used
+SET(CPACK_SOURCE_IGNORE_FILES 
+       "/build/" 
+       "/\\\\.git/" 
+       "/\\\\.gitignore" 
+       ${CPACK_SOURCE_IGNORE_FILES}
+       )
 
+SET(CPACK_SOURCE_PACKAGE_FILE_NAME "${CMAKE_PROJECT_NAME}-${CPACK_PACKAGE_VERSION_MAJOR}.${CPACK_PACKAGE_VERSION_MINOR}.${CPACK_PACKAGE_VERSION_PATCH}")
 SET(CPACK_SOURCE_PACKAGE_FILE_NAME "${CMAKE_PROJECT_NAME}-${CPACK_PACKAGE_VERSION_MAJOR}.${CPACK_PACKAGE_VERSION_MINOR}.${CPACK_PACKAGE_VERSION_PATCH}")
 INCLUDE(CPack)
 
 #This adds the 'dist' target
 add_custom_target(dist COMMAND ${CMAKE_MAKE_PROGRAM} package_source)
 IF (UNIX)
-#This creates deb packages:
-ADD_CUSTOM_TARGET(deb dpkg-buildpackage)
-ADD_DEPENDENCIES(deb dist info man)
 
 #This creates rpm packages:
 ADD_CUSTOM_TARGET(rpm rpmbuild -ta ${CPACK_SOURCE_PACKAGE_FILE_NAME}.tar.gz)

@@ -138,12 +138,12 @@ class DiscretizedCoalHmmStateAlphabet:
   public:
     virtual const bpp::BppVector<bpp::TreeTemplate<bpp::Node>*>& getState(size_t stateIndex) const throw (bpp::HmmBadStateException)
     {
-      if(stateIndex < 0 || stateIndex >= trees_.size()) throw bpp::HmmBadStateException("DiscretizedCoalHmmStateAlphabet::getState (const) [index=." + bpp::TextTools::toString(stateIndex) + "].");
+      if (stateIndex >= trees_.size()) throw bpp::HmmBadStateException("DiscretizedCoalHmmStateAlphabet::getState (const) [index=." + bpp::TextTools::toString(stateIndex) + "].");
       return trees_[stateIndex];
     }
     virtual bpp::BppVector<bpp::TreeTemplate<bpp::Node>*>& getState(size_t stateIndex) throw (bpp::HmmBadStateException)
     {
-      if(stateIndex < 0 || stateIndex >= trees_.size()) throw bpp::HmmBadStateException("DiscretizedCoalHmmStateAlphabet::getState [index=." + bpp::TextTools::toString(stateIndex) + "].");
+      if (stateIndex >= trees_.size()) throw bpp::HmmBadStateException("DiscretizedCoalHmmStateAlphabet::getState [index=." + bpp::TextTools::toString(stateIndex) + "].");
       return trees_[stateIndex];
     }
 

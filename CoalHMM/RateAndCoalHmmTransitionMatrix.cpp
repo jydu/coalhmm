@@ -39,7 +39,7 @@ RateAndCoalHmmTransitionMatrix::RateAndCoalHmmTransitionMatrix(
   omega_        = w * (static_cast<double>(nbRates_ - 1));
   addParameter_(new Parameter("omega", omega_, &Parameter::PROP_CONSTRAINT_EX));
   addParameters_(coalModel_->getParameters());
-  unsigned int n = getNumberOfStates();
+  size_t n = getNumberOfStates();
   transitions_.resize(n, n);
   freqs_.resize(n);
   actualizeTransitionMatrix();
@@ -47,13 +47,13 @@ RateAndCoalHmmTransitionMatrix::RateAndCoalHmmTransitionMatrix(
 
 void RateAndCoalHmmTransitionMatrix::actualizeTransitionMatrix()
 {
-  for (unsigned int ir = 0; ir < nbRates_; ir++)
+  for (size_t ir = 0; ir < nbRates_; ir++)
   {
-    for (unsigned int is = 0; is < nbCoalStates_; is++)
+    for (size_t is = 0; is < nbCoalStates_; is++)
     {
-      for (unsigned int jr = 0; jr < nbRates_; jr++)
+      for (size_t jr = 0; jr < nbRates_; jr++)
       {
-        for (unsigned int js = 0; js < nbCoalStates_; js++)
+        for (size_t js = 0; js < nbCoalStates_; js++)
         {
           if (ir == jr)
           // Same rate class.

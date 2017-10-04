@@ -52,7 +52,7 @@ class AbstractCoalHmmTransitionMatrix :
 {
 private:
   const CoalHmmStateAlphabet* hiddenAlphabet_;
-  unsigned int nbStates_;
+  size_t nbStates_;
 
 protected:
   bpp::RowMatrix<double> transitions_;

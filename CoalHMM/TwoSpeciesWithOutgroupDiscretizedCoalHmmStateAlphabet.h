@@ -37,7 +37,7 @@ class TwoSpeciesWithOutgroupDiscretizedCoalHmmStateAlphabet:
 {
   protected:
     std::vector<bpp::ParameterList> brlenParameters_;
-    unsigned int nbClasses_;
+    size_t nbClasses_;
     bpp::TruncatedExponentialDiscreteDistribution coalDist_;
     double a_;
     double b_;
@@ -45,7 +45,7 @@ class TwoSpeciesWithOutgroupDiscretizedCoalHmmStateAlphabet:
   public:
     TwoSpeciesWithOutgroupDiscretizedCoalHmmStateAlphabet(
         const std::string& species1, const std::string& species2, const std::string& outgroup,
-        double tau1, double tau2, double theta12, unsigned int nbClasses, bool useMedian=false, double minTau1 = 0., double minTau2 = 0.0001, double minTheta = 0.0001);
+        double tau1, double tau2, double theta12, size_t nbClasses, bool useMedian=false, double minTau1 = 0., double minTau2 = 0.0001, double minTheta = 0.0001);
 
     virtual ~TwoSpeciesWithOutgroupDiscretizedCoalHmmStateAlphabet() {}
 

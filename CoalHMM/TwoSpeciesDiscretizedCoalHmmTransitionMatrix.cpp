@@ -62,7 +62,7 @@ OldTwoSpeciesDiscretizedCoalHmmTransitionMatrix::OldTwoSpeciesDiscretizedCoalHmm
 
 void OldTwoSpeciesDiscretizedCoalHmmTransitionMatrix::initialize_()
 {
-  unsigned int n = getNumberOfStates();
+  size_t n = getNumberOfStates();
   transitions_.resize(n, n);
   freqs_.resize(n);
   noneCoalescedIndices_.resize(7); 
@@ -207,7 +207,7 @@ void OldTwoSpeciesDiscretizedCoalHmmTransitionMatrix::actualizeTransitionMatrix_
   //// first get the joint probabilities
 
   // all but the last...
-  unsigned int n = getNumberOfStates();
+  size_t n = getNumberOfStates();
   joint.resize(n, n);
   MatrixTools::fill(joint, 0);
 
@@ -444,7 +444,7 @@ TwoSpeciesDiscretizedCoalHmmTransitionMatrix::TwoSpeciesDiscretizedCoalHmmTransi
 
 void TwoSpeciesDiscretizedCoalHmmTransitionMatrix::initialize_()
 {
-  unsigned int n = getNumberOfStates();
+  size_t n = getNumberOfStates();
   transitions_.resize(n, n);
   freqs_.resize(n);
   actualizeTransitionMatrix_();
@@ -477,10 +477,10 @@ void TwoSpeciesDiscretizedCoalHmmTransitionMatrix::actualizeTransitionMatrix_()
   
   vector<double> breakpoints = dynamic_cast<const TwoSpeciesDiscretizedCoalHmmStateAlphabet*>(getHmmStateAlphabet())->getCoalescentDistribution().getBounds();
   breakpoints.erase(--breakpoints.end()); //Removes most upper bound, assumed to be infty
-  unsigned int n = breakpoints.size();
+  size_t n = breakpoints.size();
   
   vector<RowMatrix<double> > P(idx(0, n + 1));
-  unsigned int CTMCsize = Q2.getNumberOfRows();
+  size_t CTMCsize = Q2.getNumberOfRows();
   
   // Fill the diagonal with identities and one above the diagonal with exponentiated matrices
   for (unsigned int i = 0; i <= n; ++i) {

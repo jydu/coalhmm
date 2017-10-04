@@ -31,8 +31,8 @@ class RateAndCoalHmmTransitionMatrix :
 protected:
   CoalHmmTransitionMatrix* coalModel_;
   double omega_;
-  unsigned int nbCoalStates_;
-  unsigned int nbRates_;
+  size_t nbCoalStates_;
+  size_t nbRates_;
 
 public:
   RateAndCoalHmmTransitionMatrix(

@@ -47,7 +47,7 @@ void HmmTools::getBestPosteriorHiddenStates(const bpp::HmmLikelihood& hmmLik, st
       if (brkpts != hmmLik.getBreakPoints().end()) nextBrkPt = *brkpts;
       else nextBrkPt = probs.size();
     }
-    states.push_back(bpp::VectorTools::whichMax(probs[i]));
+    states.push_back(static_cast<int>(bpp::VectorTools::whichMax(probs[i])));
     //cout << i << "\t" << VectorTools::sum(probs[i]) << endl;
   }
 }
@@ -79,7 +79,7 @@ void HmmTools::getBestPosteriorCoalHiddenStates(const bpp::HmmLikelihood& hmmLik
       }
       for (size_t j = 0; j < m; j++) p[j] = 0;
       for (size_t j = 0; j < n; j++) p[j % m] += probs[i][j];
-      states.push_back(bpp::VectorTools::whichMax(p));
+      states.push_back(static_cast<int>(bpp::VectorTools::whichMax(p)));
     }
   }
   catch (exception& e)
@@ -115,7 +115,7 @@ void HmmTools::getBestPosteriorRateHiddenStates(const bpp::HmmLikelihood& hmmLik
       }
       for (size_t j = 0; j < m; j++) p[j] = 0;
       for (size_t j = 0; j < n; j++) p[j / m] += probs[i][j];
-      states.push_back(bpp::VectorTools::whichMax(p));
+      states.push_back(static_cast<int>(bpp::VectorTools::whichMax(p)));
     }
   }
   catch (exception& e)
@@ -147,7 +147,7 @@ void HmmTools::getBestPosteriorHiddenStates(const bpp::HmmLikelihood& hmmLik, st
     }
     double prob = bpp::VectorTools::max(probs[i]);
     if (prob >= threshold)
-      states[offset + i] = bpp::VectorTools::whichMax(probs[i]);
+      states[offset + i] = static_cast<int>(bpp::VectorTools::whichMax(probs[i]));
     else
       states[offset + i] = unknownCode;
   }
@@ -174,7 +174,7 @@ void HmmTools::getBestPosteriorCoalHiddenStates(const bpp::HmmLikelihood& hmmLik
       for (size_t j = 0; j < n; j++) p[j % m] += probs[i][j];
       double prob = bpp::VectorTools::max(p);
       if (prob >= threshold)
-        states[offset + i] = bpp::VectorTools::whichMax(p);
+        states[offset + i] = static_cast<int>(bpp::VectorTools::whichMax(p));
       else
         states[offset + i] = unknownCode;
     }
@@ -206,7 +206,7 @@ void HmmTools::getBestPosteriorRateHiddenStates(const bpp::HmmLikelihood& hmmLik
       for (size_t j = 0; j < n; j++) p[j / m] += probs[i][j];
       double prob = bpp::VectorTools::max(p);
       if(prob >= threshold)
-        states[offset + i] = bpp::VectorTools::whichMax(p);
+        states[offset + i] = static_cast<int>(bpp::VectorTools::whichMax(p));
       else
         states[offset + i] = unknownCode;
     }

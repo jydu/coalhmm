@@ -40,7 +40,7 @@ IlsCoalHmmTransitionMatrix09::IlsCoalHmmTransitionMatrix09(const ThreeSpeciesCoa
   addParameter_(new bpp::Parameter("coal.rho1", rho1, new bpp::IntervalConstraint(lowerRho, upperRho, true, true), true));
   addParameter_(new bpp::Parameter("coal.rho2", rho2, new bpp::IntervalConstraint(lowerRho, upperRho, true, true), true));
   addParameter_(new bpp::Parameter("coal.rho3", rho3, new bpp::IntervalConstraint(lowerRho, upperRho, true, true), true));
-  unsigned int n = getNumberOfStates();
+  size_t n = getNumberOfStates();
   transitions_.resize(n, n);
   freqs_.resize(n);
   actualizeTransitionMatrix();
@@ -60,7 +60,7 @@ IlsCoalHmmTransitionMatrix09::IlsCoalHmmTransitionMatrix09(const ThreeSpeciesCoa
   //We set a maximum bound for practical use.
   addParameter_(new bpp::Parameter("coal.rho12", rho12, new bpp::IntervalConstraint(lowerRho, upperRho, true, true), true));
   addParameter_(new bpp::Parameter("coal.rho3" , rho3, new bpp::IntervalConstraint(lowerRho, upperRho, true, true), true));
-  unsigned int n = getNumberOfStates();
+  size_t n = getNumberOfStates();
   transitions_.resize(n, n);
   freqs_.resize(n);
   actualizeTransitionMatrix();
@@ -72,7 +72,7 @@ IlsCoalHmmTransitionMatrix09::IlsCoalHmmTransitionMatrix09(const ThreeSpeciesCoa
 {
   //We set a maximum bound for practical use.
   addParameter_(new bpp::Parameter("coal.rho", rho, new bpp::IntervalConstraint(lowerRho, upperRho, true, true), true));
-  unsigned int n = getNumberOfStates();
+  size_t n = getNumberOfStates();
   transitions_.resize(n, n);
   freqs_.resize(n);
   actualizeTransitionMatrix();
@@ -1709,7 +1709,7 @@ void IlsCoalHmmTransitionMatrix09::actualizeTransitionMatrix()
   //cout << e010(_rhoH, _rhoM, _rhoG, t1, t2, theta1, theta2) << endl;
   //cout << hcrec(_rhoH, _rhoM, _rhoG, t1, t2, theta1, theta2) << endl;
 
-  unsigned int n = getNumberOfStates();
+  size_t n = getNumberOfStates();
   transitions_(0, 0) = 1. - static_cast<double>(n - 1) * s_;
   for(unsigned int i = 1; i < n; i++)
     transitions_(0, i) = s_;
