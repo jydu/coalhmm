@@ -45,7 +45,7 @@ class ThreeSpeciesCoalHmmStateAlphabet07:
     ThreeSpeciesCoalHmmStateAlphabet07* clone() const { return new ThreeSpeciesCoalHmmStateAlphabet07(*this); }
 
   public:
-    const bpp::ParameterList& getBranchLengthParametersForState(size_t stateIndex) const throw (bpp::HmmBadStateException)
+    const bpp::ParameterList& getBranchLengthParametersForState(size_t stateIndex) const
     {
       if (stateIndex > 3) throw bpp::HmmBadStateException("ThreeSpeciesHiddenStateAlphabet::getBranchLengthParametersForState [index=" + bpp::TextTools::toString(stateIndex) + "].");
       return brlenParameters_[stateIndex];

@@ -55,7 +55,7 @@ class TwoSpeciesWithOutgroupDiscretizedCoalHmmStateAlphabet:
     }
 
   public:
-    const bpp::ParameterList& getBranchLengthParametersForState(size_t stateIndex) const throw (bpp::HmmBadStateException)
+    const bpp::ParameterList& getBranchLengthParametersForState(size_t stateIndex) const
     {
       if (stateIndex > nbClasses_) throw bpp::HmmBadStateException("TwoSpeciesWithOutgroupDiscretizedCoalHiddenStateAlphabet::getBranchLengthParametersForState [index=" + bpp::TextTools::toString(stateIndex) + "].");
       return brlenParameters_[stateIndex];

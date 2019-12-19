@@ -23,7 +23,7 @@
 
 RateAndCoalHmmStateAlphabet::RateAndCoalHmmStateAlphabet(
     AverageCoalHmmStateAlphabet* hAlpha,
-    bpp::DiscreteDistribution* rDist) throw (bpp::Exception):
+    bpp::DiscreteDistribution* rDist):
   bpp::AbstractParametrizable(""),
   coalHmmAlphabet_(hAlpha),
   rDist_(rDist),
@@ -53,13 +53,13 @@ void RateAndCoalHmmStateAlphabet::applyParameters()
   rDist_          ->matchParametersValues(getParameters());
   
   //Actualize trees:
-  for (unsigned int i = 0; i < nbStates_; i++)
+  for (size_t i = 0; i < nbStates_; i++)
   {
-    unsigned int s = (unsigned int)(i % nbCoalStates_);
-    unsigned int r = i / nbCoalStates_;
+    size_t s = static_cast<size_t>(i % nbCoalStates_);
+    size_t r = i / nbCoalStates_;
     matchBranchLengths(trees_[i]->getRootNode(), coalHmmAlphabet_->getState(s).getRootNode(), rDist_->getCategory(r));
     brlenParameters_[i].matchParametersValues(coalHmmAlphabet_->getBranchLengthParametersForState(s));
-    for (unsigned int j = 0; j < brlenParameters_[i].size(); j++)
+    for (size_t j = 0; j < brlenParameters_[i].size(); j++)
     {
       brlenParameters_[i][j].setValue(brlenParameters_[i][j].getValue() * rDist_->getCategory(r));
       //cout << i << "\t" << j << "\t" << _brlenParameters[i][j]->getName() << "\t" << _brlenParameters[i][j].getValue() << endl;
@@ -88,7 +88,7 @@ void RateAndCoalHmmStateAlphabet::printUserFriendlyParameters(bpp::OutputStream&
   }
 }
 
-void RateAndCoalHmmStateAlphabet::matchBranchLengths(bpp::Node* node1, const bpp::Node* node2, double scale) throw (bpp::Exception)
+void RateAndCoalHmmStateAlphabet::matchBranchLengths(bpp::Node* node1, const bpp::Node* node2, double scale)
 {
   if(node1->getId() != node2->getId()) throw bpp::Exception("RateAndCoalHmmStateAlphabet::matchBranchLengths. Nodes are not identical (Id mismatch).");
   if(node1->getNumberOfSons() != node2->getNumberOfSons()) throw bpp::Exception("RateAndCoalHmmStateAlphabet::matchBranchLengths. Nodes are not identical (# sons mismatch).");

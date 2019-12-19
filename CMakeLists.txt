@@ -84,7 +84,7 @@ IF(CMAKE_INSTALL_PREFIX)
 ENDIF(CMAKE_INSTALL_PREFIX)
 
 include (GNUInstallDirs)
-find_package (bpp-phyl 11.0.0 REQUIRED)
+find_package (bpp-phyl 12.0.0 REQUIRED)
 
 # CMake package
 set (cmake-package-location ${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME})

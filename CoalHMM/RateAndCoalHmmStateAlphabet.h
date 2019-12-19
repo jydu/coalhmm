@@ -51,7 +51,7 @@ class RateAndCoalHmmStateAlphabet:
      */
     RateAndCoalHmmStateAlphabet(
         AverageCoalHmmStateAlphabet* hAlpha,
-        bpp::DiscreteDistribution* rDist) throw (bpp::Exception);
+        bpp::DiscreteDistribution* rDist);
 
     RateAndCoalHmmStateAlphabet(const RateAndCoalHmmStateAlphabet& alpha):
       AverageCoalHmmStateAlphabet(alpha),
@@ -68,8 +68,8 @@ class RateAndCoalHmmStateAlphabet:
     {
       AverageCoalHmmStateAlphabet::operator=(alpha);
       bpp::AbstractParametrizable::operator=(alpha);
-      coalHmmAlphabet_ = std::auto_ptr<AverageCoalHmmStateAlphabet>(alpha.coalHmmAlphabet_->clone());
-      rDist_           = std::auto_ptr<bpp::DiscreteDistribution>(alpha.rDist_->clone());
+      coalHmmAlphabet_ = std::unique_ptr<AverageCoalHmmStateAlphabet>(alpha.coalHmmAlphabet_->clone());
+      rDist_           = std::unique_ptr<bpp::DiscreteDistribution>(alpha.rDist_->clone());
       brlenParameters_ = alpha.brlenParameters_;
       nbCoalStates_    = alpha.nbCoalStates_;
       nbRates_         = alpha.nbRates_;
@@ -82,7 +82,7 @@ class RateAndCoalHmmStateAlphabet:
     RateAndCoalHmmStateAlphabet* clone() const { return new RateAndCoalHmmStateAlphabet(*this); }
 
   public:
-    const bpp::ParameterList& getBranchLengthParametersForState(size_t stateIndex) const throw (bpp::HmmBadStateException)
+    const bpp::ParameterList& getBranchLengthParametersForState(size_t stateIndex) const
     {
       if (stateIndex >= nbStates_) throw bpp::HmmBadStateException("RateAndCoalHmmStateAlphabet::getBranchLengthParametersForState [index=" + bpp::TextTools::toString(stateIndex) + "].");
       return brlenParameters_[stateIndex];
@@ -102,7 +102,7 @@ class RateAndCoalHmmStateAlphabet:
     void applyParameters();
 
     //Recursive method
-    static void matchBranchLengths(bpp::Node* node1, const bpp::Node* node2, double scale) throw (bpp::Exception);
+    static void matchBranchLengths(bpp::Node* node1, const bpp::Node* node2, double scale);
 
 };
 

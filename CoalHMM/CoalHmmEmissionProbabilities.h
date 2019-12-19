@@ -114,7 +114,7 @@ class AbstractCoalHmmEmissionProbabilities:
     const bpp::HmmStateAlphabet* getHmmStateAlphabet() const { return hiddenAlphabet_; }
 #endif
     
-    void setHmmStateAlphabet(const bpp::HmmStateAlphabet* hiddenAlphabet) throw (bpp::HmmUnvalidAlphabetException)
+    void setHmmStateAlphabet(const bpp::HmmStateAlphabet* hiddenAlphabet)
     {
       const CoalHmmStateAlphabet* cHiddenAlphabet = dynamic_cast<const CoalHmmStateAlphabet*>(hiddenAlphabet);
       if (!cHiddenAlphabet)
@@ -122,25 +122,25 @@ class AbstractCoalHmmEmissionProbabilities:
       hiddenAlphabet_ = cHiddenAlphabet;
     }
 
-    void setData(const bpp::SiteContainer& data) throw (bpp::Exception);
+    void setData(const bpp::SiteContainer& data);
     
     bool isInitialized() const { return isInitialized_; }
 
-    double getEmissionProbability(size_t pos, size_t stateIndex) const throw (bpp::Exception)
+    double getEmissionProbability(size_t pos, size_t stateIndex) const
     {
      if (stateIndex >= nbStates_) throw bpp::HmmBadStateException("AbstractCoalHmmEmissionProbabilities::getEmissionProbability. Unvalid state [index=" + bpp::TextTools::toString(stateIndex) + "].");
      if(pos >= siteIndex_.size()) throw bpp::Exception("AbstractCoalHmmEmissionProbabilities::getEmissionProbability. Bad site position: " + bpp::TextTools::toString(pos));
      return emissions_[siteIndex_[pos]][stateIndex];
     }
 
-    double getLogEmissionProbability(size_t pos, size_t stateIndex) const throw (bpp::Exception)
+    double getLogEmissionProbability(size_t pos, size_t stateIndex) const
     {
      if (stateIndex >= nbStates_) throw bpp::HmmBadStateException("AbstractCoalHmmEmissionProbabilities::getEmissionProbability. Unvalid state [index=" + bpp::TextTools::toString(stateIndex) + "].");
      if(pos >= siteIndex_.size()) throw bpp::Exception("AbstractCoalHmmEmissionProbabilities::getEmissionProbability. Bad site position: " + bpp::TextTools::toString(pos));
      return log(emissions_[siteIndex_[pos]][stateIndex]);
     }
 
-    void getEmissionProbabilities(size_t pos, std::vector<double>& probs) const throw (bpp::Exception)
+    void getEmissionProbabilities(size_t pos, std::vector<double>& probs) const
     {
       probs.resize(nbStates_);
       for(size_t i = 0; i < probs.size(); ++i)
@@ -149,7 +149,7 @@ class AbstractCoalHmmEmissionProbabilities:
       }
     }
 
-    void getEmissionProbabilitiesForEachPosition(std::vector< std::vector<double> >& probs, bool append = false) const throw (bpp::Exception)
+    void getEmissionProbabilitiesForEachPosition(std::vector< std::vector<double> >& probs, bool append = false) const
     {
       size_t offset = append ? probs.size() : 0;
       probs.resize(offset + siteIndex_.size());
@@ -159,7 +159,7 @@ class AbstractCoalHmmEmissionProbabilities:
       }
     }
 
-    void getLogEmissionProbabilities(size_t pos, std::vector<double>& probs) const throw (bpp::Exception)
+    void getLogEmissionProbabilities(size_t pos, std::vector<double>& probs) const
     {
       probs.resize(nbStates_);
       for (size_t i = 0; i < probs.size(); ++i)
@@ -168,7 +168,7 @@ class AbstractCoalHmmEmissionProbabilities:
       }
     }
 
-    void getLogEmissionProbabilitiesForEachPosition(std::vector< std::vector<double> >& probs, bool append = false) const throw (bpp::Exception)
+    void getLogEmissionProbabilitiesForEachPosition(std::vector< std::vector<double> >& probs, bool append = false) const
     {
       size_t offset = append ? probs.size() : 0;
       probs.resize(offset + siteIndex_.size());
@@ -178,7 +178,7 @@ class AbstractCoalHmmEmissionProbabilities:
       }
     }
 
-    size_t getNumberOfPositions() const throw (bpp::Exception)
+    size_t getNumberOfPositions() const
     {
       if (!data_)
         throw bpp::Exception("AbstractCoalHmmEmissionProbabilities::getNumberOfPositions. No data associated to this object.");

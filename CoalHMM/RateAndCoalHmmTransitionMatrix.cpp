@@ -28,7 +28,7 @@ using namespace bpp;
 RateAndCoalHmmTransitionMatrix::RateAndCoalHmmTransitionMatrix(
   const RateAndCoalHmmStateAlphabet* hiddenAlphabet,
   CoalHmmTransitionMatrix* coalModel,
-  double w) throw (bpp::Exception) :
+  double w) :
   AbstractCoalHmmTransitionMatrix(hiddenAlphabet),
   coalModel_(coalModel), omega_(),
   nbCoalStates_(coalModel->getNumberOfStates()),

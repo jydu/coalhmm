@@ -32,7 +32,7 @@
 
 using namespace bpp;
 
-void AbstractCoalHmmEmissionProbabilities::setData(const bpp::SiteContainer& data) throw (bpp::Exception)
+void AbstractCoalHmmEmissionProbabilities::setData(const bpp::SiteContainer& data)
 {
   //Initialize index:
   size_t nbSites = data.getNumberOfSites();

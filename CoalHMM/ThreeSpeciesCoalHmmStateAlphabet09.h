@@ -54,7 +54,7 @@ class ThreeSpeciesCoalHmmStateAlphabet09:
     }
 
   public:
-    const bpp::ParameterList& getBranchLengthParametersForState(size_t stateIndex) const throw (bpp::HmmBadStateException)
+    const bpp::ParameterList& getBranchLengthParametersForState(size_t stateIndex) const
     {
       if (stateIndex > 3)
         throw bpp::HmmBadStateException("ThreeSpeciesHmmStateAlphabet09::getBranchLengthParametersForState [index=" + bpp::TextTools::toString(stateIndex) + "].");

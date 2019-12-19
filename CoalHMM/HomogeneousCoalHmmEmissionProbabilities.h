@@ -107,9 +107,9 @@ class HomogeneousCoalHmmEmissionProbabilities:
       return dynamic_cast<const AverageCoalHmmStateAlphabet*>(AbstractCoalHmmEmissionProbabilities::getHmmStateAlphabet());
     }
 
-    void initialize() throw (bpp::Exception);
+    void initialize();
 
-    void setParameters(const bpp::ParameterList& pl) throw (bpp::Exception)
+    void setParameters(const bpp::ParameterList& pl)
     {
       setParametersValues(pl);
     }

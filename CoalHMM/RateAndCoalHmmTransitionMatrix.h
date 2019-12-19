@@ -38,7 +38,7 @@ public:
   RateAndCoalHmmTransitionMatrix(
     const RateAndCoalHmmStateAlphabet* hiddenAlphabet,
     CoalHmmTransitionMatrix* coalModel,
-    double w) throw (bpp::Exception);
+    double w);
 
   RateAndCoalHmmTransitionMatrix(const RateAndCoalHmmTransitionMatrix& tm):
     AbstractCoalHmmTransitionMatrix(tm),

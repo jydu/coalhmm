@@ -99,7 +99,7 @@ void HomogeneousCoalHmmEmissionProbabilities::init_(bool verbose)
   addParameters_(rpl);
 }
 
-void HomogeneousCoalHmmEmissionProbabilities::initialize() throw (bpp::Exception)
+void HomogeneousCoalHmmEmissionProbabilities::initialize()
 {
   if (!data_)
     throw Exception("HomogeneousCoalHmmEmissionProbabilities::initialize(). No data associated to this instance.");

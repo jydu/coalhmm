@@ -34,11 +34,11 @@ class HmmTools
   public:
     static void getBestPosteriorHiddenStates(const bpp::HmmLikelihood& hmmLik, std::vector<int>& states, int separatorCode, bool append = false);
     static void getBestPosteriorHiddenStates(const bpp::HmmLikelihood& hmmLik, std::vector<int>& states, double threshold, int unknownCode, int separatorCode, bool append = false);
-    static void getBestPosteriorCoalHiddenStates(const bpp::HmmLikelihood& hmmLik, std::vector<int>& states, int separatorCode, bool append = false) throw (bpp::Exception);
-    static void getBestPosteriorCoalHiddenStates(const bpp::HmmLikelihood& hmmLik, std::vector<int>& states, double threshold, int unknownCode, int separatorCode, bool append = false) throw (bpp::Exception);
-    static void getBestPosteriorRateHiddenStates(const bpp::HmmLikelihood& hmmLik, std::vector<int>& states, int separatorCode, bool append = false) throw (bpp::Exception);
-    static void getBestPosteriorRateHiddenStates(const bpp::HmmLikelihood& hmmLik, std::vector<int>& states, double threshold, int unknownCode, int separatorCode, bool append = false) throw (bpp::Exception);
-    static void getPosteriorDivergences(const bpp::HmmLikelihood& hmmLik, bpp::Matrix<double>& divergences, vector<int>& blocks, vector<string>& namePairs) throw (bpp::Exception);
+    static void getBestPosteriorCoalHiddenStates(const bpp::HmmLikelihood& hmmLik, std::vector<int>& states, int separatorCode, bool append = false);
+    static void getBestPosteriorCoalHiddenStates(const bpp::HmmLikelihood& hmmLik, std::vector<int>& states, double threshold, int unknownCode, int separatorCode, bool append = false);
+    static void getBestPosteriorRateHiddenStates(const bpp::HmmLikelihood& hmmLik, std::vector<int>& states, int separatorCode, bool append = false);
+    static void getBestPosteriorRateHiddenStates(const bpp::HmmLikelihood& hmmLik, std::vector<int>& states, double threshold, int unknownCode, int separatorCode, bool append = false);
+    static void getPosteriorDivergences(const bpp::HmmLikelihood& hmmLik, bpp::Matrix<double>& divergences, vector<int>& blocks, vector<string>& namePairs);
 };
 
 #endif //_HMMTOOLS_H_

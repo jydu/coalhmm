@@ -52,7 +52,7 @@ void HmmTools::getBestPosteriorHiddenStates(const bpp::HmmLikelihood& hmmLik, st
   }
 }
 
-void HmmTools::getBestPosteriorCoalHiddenStates(const bpp::HmmLikelihood& hmmLik, std::vector<int>& states, int separatorCode, bool append) throw (bpp::Exception)
+void HmmTools::getBestPosteriorCoalHiddenStates(const bpp::HmmLikelihood& hmmLik, std::vector<int>& states, int separatorCode, bool append)
 {
   if (!append) states.clear();
   vector< vector<double> > probs;
@@ -88,7 +88,7 @@ void HmmTools::getBestPosteriorCoalHiddenStates(const bpp::HmmLikelihood& hmmLik
   }
 }
 
-void HmmTools::getBestPosteriorRateHiddenStates(const bpp::HmmLikelihood& hmmLik, std::vector<int>& states, int separatorCode, bool append) throw (bpp::Exception)
+void HmmTools::getBestPosteriorRateHiddenStates(const bpp::HmmLikelihood& hmmLik, std::vector<int>& states, int separatorCode, bool append)
 {
   if (!append) states.clear();
   vector< vector<double> > probs;
@@ -153,7 +153,7 @@ void HmmTools::getBestPosteriorHiddenStates(const bpp::HmmLikelihood& hmmLik, st
   }
 }
 
-void HmmTools::getBestPosteriorCoalHiddenStates(const bpp::HmmLikelihood& hmmLik, std::vector<int>& states, double threshold, int unknownCode, int separatorCode, bool append) throw (bpp::Exception)
+void HmmTools::getBestPosteriorCoalHiddenStates(const bpp::HmmLikelihood& hmmLik, std::vector<int>& states, double threshold, int unknownCode, int separatorCode, bool append)
 {
   size_t offset = append ? states.size() : 0;
   vector< vector<double> > probs;
@@ -185,7 +185,7 @@ void HmmTools::getBestPosteriorCoalHiddenStates(const bpp::HmmLikelihood& hmmLik
   }
 }
 
-void HmmTools::getBestPosteriorRateHiddenStates(const bpp::HmmLikelihood& hmmLik, std::vector<int>& states, double threshold, int unknownCode, int separatorCode, bool append) throw (bpp::Exception)
+void HmmTools::getBestPosteriorRateHiddenStates(const bpp::HmmLikelihood& hmmLik, std::vector<int>& states, double threshold, int unknownCode, int separatorCode, bool append)
 {
   size_t offset = append ? states.size() : 0;
   vector< vector<double> > probs;
@@ -219,7 +219,7 @@ void HmmTools::getBestPosteriorRateHiddenStates(const bpp::HmmLikelihood& hmmLik
 
 /*************************************************************************************/
 
-void HmmTools::getPosteriorDivergences(const bpp::HmmLikelihood& hmmLik, bpp::Matrix<double>& divergences, vector<int>& blocks, vector<string>& namePairs) throw (bpp::Exception)
+void HmmTools::getPosteriorDivergences(const bpp::HmmLikelihood& hmmLik, bpp::Matrix<double>& divergences, vector<int>& blocks, vector<string>& namePairs)
 {
   const CoalHmmStateAlphabet& hAlpha = dynamic_cast<const CoalHmmStateAlphabet&>(hmmLik.getHmmStateAlphabet());
   size_t nbStates = hAlpha.getNumberOfStates();
@@ -234,7 +234,7 @@ void HmmTools::getPosteriorDivergences(const bpp::HmmLikelihood& hmmLik, bpp::Ma
   for (size_t i = 0; i < nbStates; ++i)
   {
     const bpp::Tree& tree = dynamic_cast<const bpp::Tree&>(hAlpha.getState(i));
-    auto_ptr<bpp::DistanceMatrix> mat(bpp::TreeTools::getDistanceMatrix(tree));
+    unique_ptr<bpp::DistanceMatrix> mat(bpp::TreeTools::getDistanceMatrix(tree));
     for (size_t j = 0; j < (names.size() - 1); ++j) {
       for (size_t k = j + 1; k < names.size(); ++k) {
         statesDiv[i].push_back((*mat)(names[j], names[k])); // do not use j,k directly, as species might not be in the same order for all states...

@@ -93,7 +93,7 @@ public:
 #endif
   getHmmStateAlphabet() const { return hiddenAlphabet_; }
 
-  void setHmmStateAlphabet(const bpp::HmmStateAlphabet* hiddenAlphabet) throw (bpp::HmmUnvalidAlphabetException)
+  void setHmmStateAlphabet(const bpp::HmmStateAlphabet* hiddenAlphabet)
   {
     const CoalHmmStateAlphabet* cHiddenAlphabet = dynamic_cast<const CoalHmmStateAlphabet*>(hiddenAlphabet);
     if (!cHiddenAlphabet)

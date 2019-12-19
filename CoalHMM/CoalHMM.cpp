@@ -96,7 +96,7 @@ void printStates(const vector<int>& states, ostream& out)
 
 
 
-AverageCoalHmmStateAlphabet* getThreeSpeciesAverageCoalHiddenAlphabet(map<string, string>& params) throw (Exception)
+AverageCoalHmmStateAlphabet* getThreeSpeciesAverageCoalHiddenAlphabet(map<string, string>& params)
 {
   string species1 = ApplicationTools::getStringParameter("species1" , params, "Ingroup1");
   string species2 = ApplicationTools::getStringParameter("species2" , params, "Ingroup2");
@@ -165,7 +165,7 @@ AverageCoalHmmStateAlphabet* getThreeSpeciesAverageCoalHiddenAlphabet(map<string
 
 
 
-AverageCoalHmmStateAlphabet* getTwoSpeciesAverageCoalHiddenAlphabet(map<string, string>& params) throw (Exception)
+AverageCoalHmmStateAlphabet* getTwoSpeciesAverageCoalHiddenAlphabet(map<string, string>& params)
 {
   string species1 = ApplicationTools::getStringParameter("species1" , params, "Ingroup1");
   string species2 = ApplicationTools::getStringParameter("species2" , params, "Ingroup2");
@@ -379,7 +379,7 @@ class IterationCounter: public OptimizationListener
   
   public:
     void optimizationInitializationPerformed(const OptimizationEvent &event) {}
-    void optimizationStepPerformed(const OptimizationEvent &event) throw (Exception)
+    void optimizationStepPerformed(const OptimizationEvent &event)
     {
       _counter++;
       if(_counter >= _maxIt) throw Exception("Maximum number of optimization reached in optimization.");
@@ -462,9 +462,9 @@ int main(int argc, char ** argv)
         if (TextTools::isEmpty(fileName)) continue;
         fileName = prefix + fileName;
         params["input.sequence.file"] = fileName;
-        auto_ptr<VectorSiteContainer> tmp(SequenceApplicationTools::getSiteContainer(alpha, params, "", false, false));
-        auto_ptr<SiteContainer> tmp2(SequenceApplicationTools::getSitesToAnalyse(*tmp, params));
-        auto_ptr<SiteContainer> sites(PatternTools::getSequenceSubset(*tmp2, hAlpha->getSpeciesNames()));
+        unique_ptr<VectorSiteContainer> tmp(SequenceApplicationTools::getSiteContainer(alpha, params, "", false, false));
+        unique_ptr<SiteContainer> tmp2(SequenceApplicationTools::getSitesToAnalyse(*tmp, params));
+        unique_ptr<SiteContainer> sites(PatternTools::getSequenceSubset(*tmp2, hAlpha->getSpeciesNames()));
         size_t nbSites = sites->getNumberOfSites();
         if (nbSites == 0)
         {
@@ -493,8 +493,8 @@ int main(int argc, char ** argv)
     }
     else
     {
-      auto_ptr<VectorSiteContainer> tmp(SequenceApplicationTools::getSiteContainer(alpha, params));
-      auto_ptr<SiteContainer> tmp2(PatternTools::getSequenceSubset(*tmp, hAlpha->getSpeciesNames()));
+      unique_ptr<VectorSiteContainer> tmp(SequenceApplicationTools::getSiteContainer(alpha, params));
+      unique_ptr<SiteContainer> tmp2(PatternTools::getSequenceSubset(*tmp, hAlpha->getSpeciesNames()));
       alignment = SequenceApplicationTools::getSitesToAnalyse(*tmp2, params);
       size_t nbSites = alignment->getNumberOfSites();
       ApplicationTools::displayResult("Number of sites", TextTools::toString(nbSites));
@@ -538,17 +538,17 @@ int main(int argc, char ** argv)
       unsigned int optVerbose = ApplicationTools::getParameter<unsigned int>("optimization.verbose", params, 2);
   
       string mhPath = ApplicationTools::getAFilePath("optimization.message_handler", params, false, false);
-      OutputStream* messageHandler = 
-        (mhPath == "none") ? 0 :
+      shared_ptr<OutputStream> messageHandler = 
+        (mhPath == "none") ? nullptr :
           (mhPath == "std") ? ApplicationTools::message :
-            new StlOutputStream(new ofstream(mhPath.c_str(), ios::out));
+            shared_ptr<StlOutputStream>(new StlOutputStream(new ofstream(mhPath.c_str(), ios::out)));
       ApplicationTools::displayResult("Message handler", mhPath);
 
       string prPath = ApplicationTools::getAFilePath("optimization.profiler", params, false, false);
-      OutputStream* profiler = 
-        (prPath == "none") ? 0 :
+      shared_ptr<OutputStream> profiler = 
+        (prPath == "none") ? nullptr :
           (prPath == "std") ? ApplicationTools::message :
-             new StlOutputStream(new ofstream(prPath.c_str(), ios::out));
+             shared_ptr<StlOutputStream>(new StlOutputStream(new ofstream(prPath.c_str(), ios::out)));
       if (profiler) profiler->setPrecision(20);
       ApplicationTools::displayResult("Profiler", prPath);
 
@@ -607,7 +607,7 @@ int main(int argc, char ** argv)
             ApplicationTools::displayError("Parameter '" + pnfe.getParameter() + "' not found, and so can't be ignored!");
           }
         }
-        OptimizationTools::optimizeNumericalParameters2(&tl, parameters, 0, tolerance, nbEvalMax, messageHandler, profiler, false, false, 1);
+        OptimizationTools::optimizeNumericalParameters2(&tl, parameters, 0, tolerance, nbEvalMax, messageHandler.get(), profiler.get(), false, false, 1);
         ParameterList pli = tl.getSubstitutionModelParameters();
         pli.addParameters(tl.getRateDistributionParameters());
         hmmLik->setParameters(pli);
@@ -640,8 +640,8 @@ int main(int argc, char ** argv)
         optimizer->addOptimizationListener(itC);
         optimizer->addOptimizationListener(&nanL);
         optimizer->setVerbose(optVerbose);
-        optimizer->setProfiler(profiler);
-        optimizer->setMessageHandler(messageHandler);
+        optimizer->setProfiler(profiler.get());
+        optimizer->setMessageHandler(messageHandler.get());
         optimizer->setMaximumNumberOfEvaluations(nbEvalMax);
         optimizer->getStopCondition()->setTolerance(tolerance);
         optimizer->setConstraintPolicy(AutoParameter::CONSTRAINTS_AUTO);
@@ -673,8 +673,8 @@ int main(int argc, char ** argv)
         optimizer = new MetaOptimizer(fun, metaInf, nbSteps);
         optimizer->addOptimizationListener(itC);
         optimizer->setVerbose(optVerbose);
-        optimizer->setProfiler(profiler);
-        optimizer->setMessageHandler(messageHandler);
+        optimizer->setProfiler(profiler.get());
+        optimizer->setMessageHandler(messageHandler.get());
         optimizer->setMaximumNumberOfEvaluations(nbEvalMax);
         optimizer->getStopCondition()->setTolerance(tolerance);
         optimizer->setConstraintPolicy(AutoParameter::CONSTRAINTS_AUTO);
@@ -706,8 +706,8 @@ int main(int argc, char ** argv)
         optimizer = new MetaOptimizer(fun, metaInf, nbSteps);
         optimizer->addOptimizationListener(itC);
         optimizer->setVerbose(optVerbose);
-        optimizer->setProfiler(profiler);
-        optimizer->setMessageHandler(messageHandler);
+        optimizer->setProfiler(profiler.get());
+        optimizer->setMessageHandler(messageHandler.get());
         optimizer->setMaximumNumberOfEvaluations(nbEvalMax);
         optimizer->getStopCondition()->setTolerance(tolerance);
         optimizer->setConstraintPolicy(AutoParameter::CONSTRAINTS_AUTO);
@@ -727,8 +727,8 @@ int main(int argc, char ** argv)
         pl.matchParametersValues(f->getParameters());
         optimizer = new PowellMultiDimensions(f);
         optimizer->setVerbose(optVerbose);
-        optimizer->setProfiler(profiler);
-        optimizer->setMessageHandler(messageHandler);
+        optimizer->setProfiler(profiler.get());
+        optimizer->setMessageHandler(messageHandler.get());
         optimizer->setMaximumNumberOfEvaluations(nbEvalMax);
         optimizer->getStopCondition()->setTolerance(tolerance);
         optimizer->setConstraintPolicy(AutoParameter::CONSTRAINTS_AUTO);
@@ -778,16 +778,14 @@ int main(int argc, char ** argv)
     ApplicationTools::displayResult("User-friendly parameters file", ufpPath);
     if (ufpPath != "none")
     {
-      OutputStream* out;
-      bool file = false;
+      shared_ptr<OutputStream> out;
       if (ufpPath == "std")
       {
         out = ApplicationTools::message;
       }
       else
       {
-        out = new StlOutputStream(new ofstream(ufpPath.c_str(), ios::out));
-        file = true;
+        out = shared_ptr<StlOutputStream>(new StlOutputStream(new ofstream(ufpPath.c_str(), ios::out)));
       }
 
       hAlpha->printUserFriendlyParameters(*out);
@@ -799,10 +797,6 @@ int main(int argc, char ** argv)
       if (itC)
       {
         (*out << "nbIterations = " << itC->getCount()).endLine();
-      }
-      if (file)
-      {
-        delete out;
       }
     }
   

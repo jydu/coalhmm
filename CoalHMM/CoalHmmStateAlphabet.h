@@ -84,12 +84,12 @@ class AverageCoalHmmStateAlphabet:
     AverageCoalHmmStateAlphabet* clone() const = 0;
 
   public:
-    virtual const bpp::TreeTemplate<bpp::Node>& getState(size_t stateIndex) const throw (bpp::HmmBadStateException)
+    virtual const bpp::TreeTemplate<bpp::Node>& getState(size_t stateIndex) const
     {
       if (stateIndex >= trees_.size()) throw bpp::HmmBadStateException("CoalHmmStateAlphabet::getState (const) [index=." + bpp::TextTools::toString(stateIndex) + "].");
       return *trees_[stateIndex];
     }
-    virtual bpp::TreeTemplate<bpp::Node>& getState(size_t stateIndex) throw (bpp::HmmBadStateException)
+    virtual bpp::TreeTemplate<bpp::Node>& getState(size_t stateIndex)
     {
       if (stateIndex >= trees_.size()) throw bpp::HmmBadStateException("CoalHmmStateAlphabet::getState [index=." + bpp::TextTools::toString(stateIndex) + "].");
       return *trees_[stateIndex];
@@ -136,12 +136,12 @@ class DiscretizedCoalHmmStateAlphabet:
     virtual ~DiscretizedCoalHmmStateAlphabet() {}
 
   public:
-    virtual const bpp::BppVector<bpp::TreeTemplate<bpp::Node>*>& getState(size_t stateIndex) const throw (bpp::HmmBadStateException)
+    virtual const bpp::BppVector<bpp::TreeTemplate<bpp::Node>*>& getState(size_t stateIndex) const
     {
       if (stateIndex >= trees_.size()) throw bpp::HmmBadStateException("DiscretizedCoalHmmStateAlphabet::getState (const) [index=." + bpp::TextTools::toString(stateIndex) + "].");
       return trees_[stateIndex];
     }
-    virtual bpp::BppVector<bpp::TreeTemplate<bpp::Node>*>& getState(size_t stateIndex) throw (bpp::HmmBadStateException)
+    virtual bpp::BppVector<bpp::TreeTemplate<bpp::Node>*>& getState(size_t stateIndex)
     {
       if (stateIndex >= trees_.size()) throw bpp::HmmBadStateException("DiscretizedCoalHmmStateAlphabet::getState [index=." + bpp::TextTools::toString(stateIndex) + "].");
       return trees_[stateIndex];
