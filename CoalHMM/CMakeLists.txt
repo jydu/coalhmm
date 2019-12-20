@@ -30,6 +30,16 @@ IF(BUILD_STATIC)
   TARGET_LINK_LIBRARIES(coalhmm ${STATIC_LIBS})
   SET_TARGET_PROPERTIES (coalhmm PROPERTIES LINK_SEARCH_END_STATIC TRUE)
   
+  # Build the static lib
+  ADD_LIBRARY(libcoalhmm-static STATIC ${coalhmm_CPP})
+  target_include_directories (libcoalhmm-static PUBLIC
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
+    $<INSTALL_INTERFACE:$<INSTALL_PREFIX>/${CMAKE_INSTALL_INCLUDEDIR}>
+  )
+  set_target_properties (libcoalhmm-static PROPERTIES OUTPUT_NAME libcoalhmm)
+  target_link_libraries (libcoalhmm-static ${BPP_LIBS_STATIC})
+  target_link_libraries (coalhmm ${BPP_LIBS_STATIC})
+
 ELSE(BUILD_STATIC)
   # Build the static lib
   ADD_LIBRARY(libcoalhmm-static STATIC ${coalhmm_CPP})
@@ -39,7 +49,6 @@ ELSE(BUILD_STATIC)
   )
   set_target_properties (libcoalhmm-static PROPERTIES OUTPUT_NAME libcoalhmm)
   target_link_libraries (libcoalhmm-static ${BPP_LIBS_STATIC})
-
 
   # Build the shared lib
   ADD_LIBRARY(libcoalhmm-shared SHARED ${coalhmm_CPP})
