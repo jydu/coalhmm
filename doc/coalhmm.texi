@@ -1,7 +1,7 @@
 \input texinfo   @c -*-texinfo-*-
 @c %**start of header
 @setfilename coalhmm.info
-@settitle CoalHMM Manual 1.0.1
+@settitle CoalHMM Manual 1.0.3
 @documentencoding UTF-8
 @afourpaper
 @dircategory Science Biology Genetics
@@ -21,7 +21,7 @@ Copyright @copyright{} 2011
 @titlepage
 @title CoalHMM Manual
 @author Julien Dutheil
-@author @email{julien.dutheil@@univ-montp2.fr}
+@author @email{dutheil@@evolbio.mpg.de}
 
 @c The following two commands start the copyright page.
 @page
@@ -37,7 +37,6 @@ Copyright @copyright{} 2011
 @top The CoalHMM Manual
 
 @insertcopying
-@end ifnottex
 
 @menu
 * Introduction::                Introducing the CoalHMM software and methods and this manual.                
@@ -61,6 +60,7 @@ Fitting a coalHMM model
 
 @end detailmenu
 @end menu
+@end ifnottex
 
 @c ------------------------------------------------------------------------------------------------------------------
 
