@@ -627,7 +627,7 @@ int main(int argc, char ** argv)
         f = new ReparametrizationFunctionWrapper(hmmLik);
 
         //Reset parameters to remove constraints:
-        pl = f->getParameters().subList(pl.getParameterNames());
+        pl = f->getParameters().createSubList(pl.getParameterNames());
       }
       if (optMethod == "fullD")
       {

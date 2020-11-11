@@ -40,7 +40,7 @@ NonClockAverageCoalHmmStateAlphabet::NonClockAverageCoalHmmStateAlphabet(Average
   species_ = alphabet->getSpeciesNames();
 
   addParameters_(alphabet_->getParameters());
-  addParameter_(new Parameter(speciesWithError_ + "_error", error_, &Parameter::R_PLUS, false));
+  addParameter_(new Parameter(speciesWithError_ + "_error", error_, Parameter::R_PLUS));
   fireParameterChanged(getParameters());
 }
 

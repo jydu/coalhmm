@@ -37,7 +37,7 @@ RateAndCoalHmmTransitionMatrix::RateAndCoalHmmTransitionMatrix(
   if (nbRates_ == 1)
     throw Exception("RateAndCoalHmmTransitionMatrix: At least two rate categories are needed!");
   omega_        = w * (static_cast<double>(nbRates_ - 1));
-  addParameter_(new Parameter("omega", omega_, &Parameter::PROP_CONSTRAINT_EX));
+  addParameter_(new Parameter("omega", omega_, Parameter::PROP_CONSTRAINT_EX));
   addParameters_(coalModel_->getParameters());
   size_t n = getNumberOfStates();
   transitions_.resize(n, n);

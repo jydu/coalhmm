@@ -21,6 +21,9 @@
 
 #include "ThreeSpeciesCoalHmmStateAlphabet09.h"
 
+#include<memory>
+using namespace std;
+
 ThreeSpeciesCoalHmmStateAlphabet09::ThreeSpeciesCoalHmmStateAlphabet09(
     const std::string& species1, const std::string& species2, const std::string& species3, const std::string& outgroup,
     double tau1, double tau2, double c2, double theta1, double theta2, short parametrization, bool useMedian, double minTau, double minTheta, double maxTau, double maxTheta) :
@@ -34,15 +37,15 @@ ThreeSpeciesCoalHmmStateAlphabet09::ThreeSpeciesCoalHmmStateAlphabet09(
   minTau = std::max(0., minTau);
   minTheta = std::max(0., minTheta);
   if (parametrization == 1) {
-    addParameter_(new bpp::Parameter("coal.tau1"  , tau1  , new bpp::IntervalConstraint(minTau, maxTau, true, true)    , true));
-    addParameter_(new bpp::Parameter("coal.tau2"  , tau2  , new bpp::IntervalConstraint(minTau, maxTau, true, true)    , true));
+    addParameter_(new bpp::Parameter("coal.tau1"  , tau1  , make_shared<bpp::IntervalConstraint>(minTau, maxTau, true, true)));
+    addParameter_(new bpp::Parameter("coal.tau2"  , tau2  , make_shared<bpp::IntervalConstraint>(minTau, maxTau, true, true)));
   } else {
-    addParameter_(new bpp::Parameter("coal.sigma1", tau1 / (tau1 + tau2), new bpp::IntervalConstraint(minTau / (tau1 + tau2), 1. - minTau / (tau1 + tau2), true, true), true));
-    addParameter_(new bpp::Parameter("coal.tau12" , tau1 + tau2         , new bpp::IntervalConstraint(minTau, maxTau, true, true), true));
+    addParameter_(new bpp::Parameter("coal.sigma1", tau1 / (tau1 + tau2), make_shared<bpp::IntervalConstraint>(minTau / (tau1 + tau2), 1. - minTau / (tau1 + tau2), true, true)));
+    addParameter_(new bpp::Parameter("coal.tau12" , tau1 + tau2         , make_shared<bpp::IntervalConstraint>(minTau, maxTau, true, true)));
   }
-  addParameter_(new bpp::Parameter("coal.c2"    , c2    , new bpp::IntervalConstraint(minTau, maxTau, true, true)    , true));
-  addParameter_(new bpp::Parameter("coal.theta1", theta1, new bpp::IntervalConstraint(minTheta, maxTheta, true, true), true));
-  addParameter_(new bpp::Parameter("coal.theta2", theta2, new bpp::IntervalConstraint(minTheta, maxTheta, true, true), true));
+  addParameter_(new bpp::Parameter("coal.c2"    , c2    , make_shared<bpp::IntervalConstraint>(minTau  , maxTau  , true, true)));
+  addParameter_(new bpp::Parameter("coal.theta1", theta1, make_shared<bpp::IntervalConstraint>(minTheta, maxTheta, true, true)));
+  addParameter_(new bpp::Parameter("coal.theta2", theta2, make_shared<bpp::IntervalConstraint>(minTheta, maxTheta, true, true)));
 
   species_.push_back(species1);
   species_.push_back(species2);

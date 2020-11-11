@@ -19,7 +19,6 @@
 //You should have received a copy of the GNU General Public License
 //along with CoalHMM.  If not, see <http://www.gnu.org/licenses/>.
 
-#include <cassert>
 
 #include "TwoSpeciesDiscretizedCoalHmmTransitionMatrix.h"
 //This is for the old version:
@@ -34,28 +33,34 @@
 using namespace bpp;
 
 //From the STL:
+#include <cassert>
+#include <memory>
 #include <deque>
 using namespace std;
 
-OldTwoSpeciesDiscretizedCoalHmmTransitionMatrix::OldTwoSpeciesDiscretizedCoalHmmTransitionMatrix(const TwoSpeciesDiscretizedCoalHmmStateAlphabet* hiddenAlphabet, double rho, double theta1, double theta2, double minRho, double minTheta):
+OldTwoSpeciesDiscretizedCoalHmmTransitionMatrix::OldTwoSpeciesDiscretizedCoalHmmTransitionMatrix(
+		const TwoSpeciesDiscretizedCoalHmmStateAlphabet* hiddenAlphabet,
+	       	double rho, double theta1, double theta2, double minRho, double minTheta):
   AbstractCoalHmmTransitionMatrix(hiddenAlphabet),
   tau1_(), rho_(rho), theta1_(theta1), theta2_(theta2), theta12_(),
   noneCoalescedIndices_(), bothCoalescedIndices_(), leftCoalescedRightNotIndices_(),
   extentThetas_(true)
 {
-  addParameter_(new Parameter("coal.theta1", theta1_, new IntervalConstraint(1, minTheta, true), true));
-  addParameter_(new Parameter("coal.theta2", theta2_, new IntervalConstraint(1, minTheta, true), true));
-  addParameter_(new Parameter("coal.rho", rho_, new IntervalConstraint(1, 0.0001, true), true));
+  addParameter_(new Parameter("coal.theta1", theta1_, make_shared<IntervalConstraint>(1, minTheta, true)));
+  addParameter_(new Parameter("coal.theta2", theta2_, make_shared<IntervalConstraint>(1, minTheta, true)));
+  addParameter_(new Parameter("coal.rho", rho_, make_shared<IntervalConstraint>(1, 0.0001, true)));
   initialize_();
 }
 
-OldTwoSpeciesDiscretizedCoalHmmTransitionMatrix::OldTwoSpeciesDiscretizedCoalHmmTransitionMatrix(const TwoSpeciesDiscretizedCoalHmmStateAlphabet* hiddenAlphabet, double rho, double minRho):
+OldTwoSpeciesDiscretizedCoalHmmTransitionMatrix::OldTwoSpeciesDiscretizedCoalHmmTransitionMatrix(
+		const TwoSpeciesDiscretizedCoalHmmStateAlphabet* hiddenAlphabet,
+	       	double rho, double minRho):
   AbstractCoalHmmTransitionMatrix(hiddenAlphabet),
   tau1_(), rho_(rho), theta1_(0), theta2_(0), theta12_(),
   noneCoalescedIndices_(), bothCoalescedIndices_(), leftCoalescedRightNotIndices_(),
   extentThetas_(false)
 {
-  addParameter_(new Parameter("coal.rho", rho_, new IntervalConstraint(1, minRho, true), true)); 
+  addParameter_(new Parameter("coal.rho", rho_, make_shared<IntervalConstraint>(1, minRho, true))); 
   initialize_();
 }
 
@@ -424,21 +429,25 @@ void OldTwoSpeciesDiscretizedCoalHmmTransitionMatrix::printUserFriendlyParameter
 
 
 
-TwoSpeciesDiscretizedCoalHmmTransitionMatrix::TwoSpeciesDiscretizedCoalHmmTransitionMatrix(const TwoSpeciesDiscretizedCoalHmmStateAlphabet* hiddenAlphabet, double rho, double theta1, double theta2, double minRho, double minTheta):
+TwoSpeciesDiscretizedCoalHmmTransitionMatrix::TwoSpeciesDiscretizedCoalHmmTransitionMatrix(
+		const TwoSpeciesDiscretizedCoalHmmStateAlphabet* hiddenAlphabet,
+	       	double rho, double theta1, double theta2, double minRho, double minTheta):
   AbstractCoalHmmTransitionMatrix(hiddenAlphabet), 
   tau1_(), rho_(rho), theta1_(theta1), theta2_(theta2), theta12_(), extentThetas_(true)
 {
-  addParameter_(new Parameter("coal.theta1", theta1_, new IntervalConstraint(1, minTheta, true), true));
-  addParameter_(new Parameter("coal.theta2", theta2_, new IntervalConstraint(1, minTheta, true), true));
-  addParameter_(new Parameter("coal.rho", rho_, new IntervalConstraint(1, 0.0001, true), true));
+  addParameter_(new Parameter("coal.theta1", theta1_, make_shared<IntervalConstraint>(1, minTheta, true)));
+  addParameter_(new Parameter("coal.theta2", theta2_, make_shared<IntervalConstraint>(1, minTheta, true)));
+  addParameter_(new Parameter("coal.rho"   , rho_   , make_shared<IntervalConstraint>(1, 0.0001  , true)));
   initialize_();
 }
 
-TwoSpeciesDiscretizedCoalHmmTransitionMatrix::TwoSpeciesDiscretizedCoalHmmTransitionMatrix(const TwoSpeciesDiscretizedCoalHmmStateAlphabet* hiddenAlphabet, double rho, double minRho):
+TwoSpeciesDiscretizedCoalHmmTransitionMatrix::TwoSpeciesDiscretizedCoalHmmTransitionMatrix(
+		const TwoSpeciesDiscretizedCoalHmmStateAlphabet* hiddenAlphabet,
+	       	double rho, double minRho):
   AbstractCoalHmmTransitionMatrix(hiddenAlphabet),
   tau1_(), rho_(rho), theta1_(0), theta2_(0), theta12_(), extentThetas_(false)
 {
-  addParameter_(new Parameter("coal.rho", rho_, new IntervalConstraint(1, minRho, true), true)); 
+  addParameter_(new Parameter("coal.rho", rho_, make_shared<IntervalConstraint>(1, minRho, true))); 
   initialize_();
 }
 

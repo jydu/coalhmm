@@ -22,6 +22,7 @@
 
 #include "IlsCoalHmmTransitionMatrix09.h"
 #include <Bpp/Numeric/Matrix/MatrixTools.h>
+#include <memory>
 
 using namespace std;
 using namespace bpp;
@@ -30,23 +31,27 @@ const short IlsCoalHmmTransitionMatrix09::ONE_RHO = 1;
 const short IlsCoalHmmTransitionMatrix09::TWO_RHOS_12 = 2;
 const short IlsCoalHmmTransitionMatrix09::THREE_RHOS = 3;
 
-IlsCoalHmmTransitionMatrix09::IlsCoalHmmTransitionMatrix09(const ThreeSpeciesCoalHmmStateAlphabet* hiddenAlphabet, double rho1, double rho2, double rho3, double lowerRho, double upperRho):
+IlsCoalHmmTransitionMatrix09::IlsCoalHmmTransitionMatrix09(
+		const ThreeSpeciesCoalHmmStateAlphabet* hiddenAlphabet,
+	       	double rho1, double rho2, double rho3, double lowerRho, double upperRho):
   AbstractCoalHmmTransitionMatrix(hiddenAlphabet), rhoOption_(THREE_RHOS), rho1_(rho1), rho2_(rho2), rho3_(rho3),
   s_(), u_(), v1_(), v2_()
 {
   //We set a maximum bound for practical use.
   lowerRho = std::max(0., lowerRho);
   upperRho = std::max(lowerRho + 0.1, upperRho);
-  addParameter_(new bpp::Parameter("coal.rho1", rho1, new bpp::IntervalConstraint(lowerRho, upperRho, true, true), true));
-  addParameter_(new bpp::Parameter("coal.rho2", rho2, new bpp::IntervalConstraint(lowerRho, upperRho, true, true), true));
-  addParameter_(new bpp::Parameter("coal.rho3", rho3, new bpp::IntervalConstraint(lowerRho, upperRho, true, true), true));
+  addParameter_(new bpp::Parameter("coal.rho1", rho1, make_shared<bpp::IntervalConstraint>(lowerRho, upperRho, true, true)));
+  addParameter_(new bpp::Parameter("coal.rho2", rho2, make_shared<bpp::IntervalConstraint>(lowerRho, upperRho, true, true)));
+  addParameter_(new bpp::Parameter("coal.rho3", rho3, make_shared<bpp::IntervalConstraint>(lowerRho, upperRho, true, true)));
   size_t n = getNumberOfStates();
   transitions_.resize(n, n);
   freqs_.resize(n);
   actualizeTransitionMatrix();
 }
 
-IlsCoalHmmTransitionMatrix09::IlsCoalHmmTransitionMatrix09(const ThreeSpeciesCoalHmmStateAlphabet* hiddenAlphabet, double rho12, double rho3, short rhoOption, double lowerRho, double upperRho):
+IlsCoalHmmTransitionMatrix09::IlsCoalHmmTransitionMatrix09(
+		const ThreeSpeciesCoalHmmStateAlphabet* hiddenAlphabet,
+	       	double rho12, double rho3, short rhoOption, double lowerRho, double upperRho):
   AbstractCoalHmmTransitionMatrix(hiddenAlphabet), rhoOption_(rhoOption), rho1_(), rho2_(), rho3_(),
   s_(), u_(), v1_(), v2_()
 {
@@ -58,8 +63,8 @@ IlsCoalHmmTransitionMatrix09::IlsCoalHmmTransitionMatrix09(const ThreeSpeciesCoa
   }
   else throw bpp::Exception("IlsCoalHmmTransitionMatrix08 (constructor 2). Bad rho option.");
   //We set a maximum bound for practical use.
-  addParameter_(new bpp::Parameter("coal.rho12", rho12, new bpp::IntervalConstraint(lowerRho, upperRho, true, true), true));
-  addParameter_(new bpp::Parameter("coal.rho3" , rho3, new bpp::IntervalConstraint(lowerRho, upperRho, true, true), true));
+  addParameter_(new bpp::Parameter("coal.rho12", rho12, make_shared<bpp::IntervalConstraint>(lowerRho, upperRho, true, true)));
+  addParameter_(new bpp::Parameter("coal.rho3" , rho3 , make_shared<bpp::IntervalConstraint>(lowerRho, upperRho, true, true)));
   size_t n = getNumberOfStates();
   transitions_.resize(n, n);
   freqs_.resize(n);
@@ -71,7 +76,7 @@ IlsCoalHmmTransitionMatrix09::IlsCoalHmmTransitionMatrix09(const ThreeSpeciesCoa
   s_(), u_(), v1_(), v2_()
 {
   //We set a maximum bound for practical use.
-  addParameter_(new bpp::Parameter("coal.rho", rho, new bpp::IntervalConstraint(lowerRho, upperRho, true, true), true));
+  addParameter_(new bpp::Parameter("coal.rho", rho, make_shared<bpp::IntervalConstraint>(lowerRho, upperRho, true, true)));
   size_t n = getNumberOfStates();
   transitions_.resize(n, n);
   freqs_.resize(n);

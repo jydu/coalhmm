@@ -21,6 +21,9 @@
 
 #include "TwoSpeciesWithoutOutgroupDiscretizedCoalHmmStateAlphabet.h"
 
+#include<memory>
+using namespace std;
+
 TwoSpeciesWithoutOutgroupDiscretizedCoalHmmStateAlphabet::TwoSpeciesWithoutOutgroupDiscretizedCoalHmmStateAlphabet(
     const std::string& species1, const std::string& species2,
     double tau1, double theta12, size_t nbClasses, bool useMedian, double minTau, double minTheta) :
@@ -35,8 +38,8 @@ TwoSpeciesWithoutOutgroupDiscretizedCoalHmmStateAlphabet::TwoSpeciesWithoutOutgr
   //These constraints are to avoid numerical issues. They comprise any reasonable biological values...
   minTau = std::max(0., minTau);
   minTheta = std::max(0., minTheta);
-  addParameter_(new bpp::Parameter("coal.tau1"   , tau1   , new bpp::IntervalConstraint(1, minTau, true), true));
-  addParameter_(new bpp::Parameter("coal.theta12", theta12, new bpp::IntervalConstraint(1, minTheta, true), true));
+  addParameter_(new bpp::Parameter("coal.tau1"   , tau1   , make_shared<bpp::IntervalConstraint>(1, minTau, true)));
+  addParameter_(new bpp::Parameter("coal.theta12", theta12, make_shared<bpp::IntervalConstraint>(1, minTheta, true)));
 
   species_.push_back(species1);
   species_.push_back(species2);

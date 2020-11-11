@@ -21,6 +21,9 @@
 
 #include "ThreeSpeciesCoalHmmStateAlphabet07.h"
 
+#include <memory>
+using namespace std;
+
 ThreeSpeciesCoalHmmStateAlphabet07::ThreeSpeciesCoalHmmStateAlphabet07(
     const std::string& species1, const std::string& species2, const std::string& species3, const std::string& outgroup,
     double a, double b, double c, double a2, bool reparam) :
@@ -28,17 +31,17 @@ ThreeSpeciesCoalHmmStateAlphabet07::ThreeSpeciesCoalHmmStateAlphabet07(
 {
   double p = (a2 - a) / b;
   double c2 = c - 0.5 * b * (1. - p);
-  addParameter_(new bpp::Parameter("coal.a", a, &bpp::Parameter::R_PLUS_STAR, false));
-  addParameter_(new bpp::Parameter("coal.b", b, &bpp::Parameter::R_PLUS_STAR, false));
+  addParameter_(new bpp::Parameter("coal.a", a, bpp::Parameter::R_PLUS_STAR));
+  addParameter_(new bpp::Parameter("coal.b", b, bpp::Parameter::R_PLUS_STAR));
   if (reparam)
   {
-    addParameter_(new bpp::Parameter("coal.c2", c2, &bpp::Parameter::R_PLUS_STAR));
-    addParameter_(new bpp::Parameter("coal.p", p, new bpp::IntervalConstraint(0, 1, false, false), true)); //For estimation purposes, minimum 0.3??.
+    addParameter_(new bpp::Parameter("coal.c2", c2, bpp::Parameter::R_PLUS_STAR));
+    addParameter_(new bpp::Parameter("coal.p", p, make_shared<bpp::IntervalConstraint>(0, 1, false, false))); //For estimation purposes, minimum 0.3??.
   }
   else
   {
-    addParameter_(new bpp::Parameter("coal.c", c, &bpp::Parameter::R_PLUS_STAR));
-    addParameter_(new bpp::Parameter("coal.a2", p, &bpp::Parameter::R_PLUS_STAR));
+    addParameter_(new bpp::Parameter("coal.c", c, bpp::Parameter::R_PLUS_STAR));
+    addParameter_(new bpp::Parameter("coal.a2", p, bpp::Parameter::R_PLUS_STAR));
   }
 
   species_.push_back(species1);
