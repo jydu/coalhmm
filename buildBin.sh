@@ -1,6 +1,6 @@
 #! /bin/sh
 arch=x86_64 #i686
-version=1.0.0-2
+version=1.0.3-1
 
 cd build
 strip CoalHMM/coalhmm
