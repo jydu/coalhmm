@@ -28,7 +28,7 @@
 
 /**
  * @brief This alphabet is a wrapper class that takes as input another AverageCoalHmmStateAlphabet, and adds mutational parameters allowing for different substitution and/or sequencing error rates.
- * For now, only one branch is allowed to have differential rates.
+ * Up to two branches are allowed to have differential rates.
  */
 class NonClockAverageCoalHmmStateAlphabet:
   public AverageCoalHmmStateAlphabet,
@@ -36,20 +36,37 @@ class NonClockAverageCoalHmmStateAlphabet:
 {
   public:
     AverageCoalHmmStateAlphabet* alphabet_;
-    std::string speciesWithError_;
-    double error_;
+    std::string speciesWithError1_;
+    std::string speciesWithError2_;
+    double error1_;
+    double error2_;
+    bool hasSecondError_;
     std::vector<bpp::ParameterList> brlenParameters_;
 
   public:
-    NonClockAverageCoalHmmStateAlphabet(AverageCoalHmmStateAlphabet* alphabet, const std::string& species, double error=0);
+    NonClockAverageCoalHmmStateAlphabet(
+        AverageCoalHmmStateAlphabet* alphabet,
+        const std::string& species,
+       	double error = 0);
+
+    NonClockAverageCoalHmmStateAlphabet(
+        AverageCoalHmmStateAlphabet* alphabet,
+        const std::string& species1,
+        const std::string& species2,
+       	double error1 = 0,
+       	double error2 = 0);
+
     ~NonClockAverageCoalHmmStateAlphabet() { delete alphabet_; }
 
     NonClockAverageCoalHmmStateAlphabet(const NonClockAverageCoalHmmStateAlphabet& model) :
       AverageCoalHmmStateAlphabet(model),
       AbstractParametrizable(model),
       alphabet_(model.alphabet_->clone()),
-      speciesWithError_(model.speciesWithError_),
-      error_(model.error_),
+      speciesWithError1_(model.speciesWithError1_),
+      speciesWithError2_(model.speciesWithError2_),
+      error1_(model.error1_),
+      error2_(model.error2_),
+      hasSecondError_(model.hasSecondError_),
       brlenParameters_(model.brlenParameters_)
     {}
 
@@ -57,14 +74,19 @@ class NonClockAverageCoalHmmStateAlphabet:
     {
       AverageCoalHmmStateAlphabet::operator=(model);
       AbstractParametrizable::operator=(model);
-      alphabet_        = model.alphabet_->clone();
-      species_         = model.species_;
-      error_           = model.error_;
-      brlenParameters_ = model.brlenParameters_;
+      alphabet_          = model.alphabet_->clone();
+      speciesWithError1_ = model.speciesWithError1_;
+      speciesWithError2_ = model.speciesWithError2_;
+      error1_            = model.error1_;
+      error2_            = model.error2_;
+      hasSecondError_    = model.hasSecondError_;
+      brlenParameters_   = model.brlenParameters_;
       return *this;
     }
 
-    NonClockAverageCoalHmmStateAlphabet* clone() const { return new NonClockAverageCoalHmmStateAlphabet(*this); }
+    NonClockAverageCoalHmmStateAlphabet* clone() const {
+      return new NonClockAverageCoalHmmStateAlphabet(*this);
+    }
 
   public:
     bool worksWith(const HmmStateAlphabet* stateAlphabet) const {

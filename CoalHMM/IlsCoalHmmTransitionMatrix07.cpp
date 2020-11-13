@@ -36,11 +36,11 @@ IlsCoalHmmTransitionMatrix07::IlsCoalHmmTransitionMatrix07(const CoalHmmStateAlp
   sigma_  = 3. * s;
   mu_     = u + v1 + v2;
   nu_     = (v1 + v2) / mu_;
-  addParameter_(new bpp::Parameter("sigma" , sigma_, &bpp::Parameter::PROP_CONSTRAINT_EX));
-  addParameter_(new bpp::Parameter("nu"    , nu_   , &bpp::Parameter::PROP_CONSTRAINT_EX));
-  addParameter_(new bpp::Parameter("mu"    , mu_   , &bpp::Parameter::PROP_CONSTRAINT_EX));
+  addParameter_(new bpp::Parameter("sigma" , sigma_, bpp::Parameter::PROP_CONSTRAINT_EX));
+  addParameter_(new bpp::Parameter("nu"    , nu_   , bpp::Parameter::PROP_CONSTRAINT_EX));
+  addParameter_(new bpp::Parameter("mu"    , mu_   , bpp::Parameter::PROP_CONSTRAINT_EX));
   if (!onev) 
-    addParameter_(new bpp::Parameter("lambda", lambda_, &bpp::Parameter::PROP_CONSTRAINT_EX));
+    addParameter_(new bpp::Parameter("lambda", lambda_, bpp::Parameter::PROP_CONSTRAINT_EX));
   transitions_.resize(4, 4);
   freqs_.resize(4);
   actualizeTransitionMatrix();

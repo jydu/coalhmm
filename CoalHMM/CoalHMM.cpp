@@ -307,7 +307,7 @@ string getModel(const string& method, map<string, string>& params, AverageCoalHm
   map<string, string> args;
   string model;
   KeyvalTools::parseProcedure(method, model, args);
-	
+  
   if (model == "ILS")
   {
     size_t nbsp = ApplicationTools::getParameter<size_t>("numberOfSpecies", args, 3);
@@ -355,11 +355,24 @@ string getModel(const string& method, map<string, string>& params, AverageCoalHm
     AverageCoalHmmStateAlphabet* chAlpha;
     string subtype = getModel(subproc, params, chAlpha, hModel, rDist);
  
-    double error = ApplicationTools::getDoubleParameter("error", args, 0.);
-    string species = ApplicationTools::getStringParameter("species", args, "");
-    ApplicationTools::displayResult(species + "_error", TextTools::toString(error));
-    hAlpha = new NonClockAverageCoalHmmStateAlphabet(chAlpha, species, error);
-    return model + "+" + subtype;
+    if (ApplicationTools::parameterExists("species2", args)) {
+      //Two species with errors
+      string species1 = ApplicationTools::getStringParameter("species1", args, "");
+      double error1 = ApplicationTools::getDoubleParameter("error1", args, 0.);
+      string species2 = ApplicationTools::getStringParameter("species2", args, "");
+      double error2 = ApplicationTools::getDoubleParameter("error2", args, 0.);
+      ApplicationTools::displayResult(species1 + "_error", TextTools::toString(error1));
+      ApplicationTools::displayResult(species2 + "_error", TextTools::toString(error2));
+      hAlpha = new NonClockAverageCoalHmmStateAlphabet(chAlpha, species1, species2, error1, error2);
+      return model + "+" + subtype;
+    } else {
+      //Only one species with errors
+      string species = ApplicationTools::getStringParameter("species", args, "");
+      double error = ApplicationTools::getDoubleParameter("error", args, 0.);
+      ApplicationTools::displayResult(species + "_error", TextTools::toString(error));
+      hAlpha = new NonClockAverageCoalHmmStateAlphabet(chAlpha, species, error);
+      return model + "+" + subtype;
+    }
   }
   else
   {
@@ -627,7 +640,7 @@ int main(int argc, char ** argv)
         f = new ReparametrizationFunctionWrapper(hmmLik);
 
         //Reset parameters to remove constraints:
-        pl = f->getParameters().subList(pl.getParameterNames());
+        pl = f->getParameters().createSubList(pl.getParameterNames());
       }
       if (optMethod == "fullD")
       {

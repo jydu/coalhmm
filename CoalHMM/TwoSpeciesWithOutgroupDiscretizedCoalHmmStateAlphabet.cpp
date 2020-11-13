@@ -21,6 +21,9 @@
 
 #include "TwoSpeciesWithOutgroupDiscretizedCoalHmmStateAlphabet.h"
 
+#include<memory>
+using namespace std;
+
 TwoSpeciesWithOutgroupDiscretizedCoalHmmStateAlphabet::TwoSpeciesWithOutgroupDiscretizedCoalHmmStateAlphabet(
     const std::string& species1, const std::string& species2, const std::string& outgroup,
     double tau1, double tau2, double theta12, size_t nbClasses, bool useMedian, double minTau1, double minTau2, double minTheta) :
@@ -36,9 +39,9 @@ TwoSpeciesWithOutgroupDiscretizedCoalHmmStateAlphabet::TwoSpeciesWithOutgroupDis
   minTau1 = std::max(0., minTau1);
   minTau2 = std::max(0., minTau2);
   minTheta = std::max(0., minTheta);
-  addParameter_(new bpp::Parameter("coal.tau1"   , tau1   , new bpp::IntervalConstraint(1, minTau1, true), true));
-  addParameter_(new bpp::Parameter("coal.tau2"   , tau2   , new bpp::IntervalConstraint(1, minTau2, true), true)); //Prevents discretization issue
-  addParameter_(new bpp::Parameter("coal.theta12", theta12, new bpp::IntervalConstraint(1, minTheta, true), true));
+  addParameter_(new bpp::Parameter("coal.tau1"   , tau1   , make_shared<bpp::IntervalConstraint>(1, minTau1, true)));
+  addParameter_(new bpp::Parameter("coal.tau2"   , tau2   , make_shared<bpp::IntervalConstraint>(1, minTau2, true))); //Prevents discretization issue
+  addParameter_(new bpp::Parameter("coal.theta12", theta12, make_shared<bpp::IntervalConstraint>(1, minTheta, true)));
 
   species_.push_back(species1);
   species_.push_back(species2);
