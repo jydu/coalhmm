@@ -88,16 +88,15 @@ void NonClockAverageCoalHmmStateAlphabet::fireParameterChanged(const ParameterLi
 
   //Update topologies and branch lengths:
   for (size_t i = 0; i < alphabet_->getNumberOfStates(); ++i) {
+    brlenParameters_[i].matchParametersValues(alphabet_->getBranchLengthParametersForState(i));
     *trees_[i] = alphabet_->getState(i);
     Node* node = trees_[i]->getNode(speciesWithError1_);
     node->setDistanceToFather(node->getDistanceToFather() + error1_);
-    brlenParameters_[i].matchParametersValues(alphabet_->getBranchLengthParametersForState(i));
     brlenParameters_[i].setParameterValue(
         "BrLen" + TextTools::toString(node->getId()), node->getDistanceToFather()); 
     if (hasSecondError_) {
       Node* node2 = trees_[i]->getNode(speciesWithError2_);
       node2->setDistanceToFather(node2->getDistanceToFather() + error2_);
-      brlenParameters_[i].matchParametersValues(alphabet_->getBranchLengthParametersForState(i));
       brlenParameters_[i].setParameterValue(
           "BrLen" + TextTools::toString(node2->getId()), node2->getDistanceToFather()); 
     }
