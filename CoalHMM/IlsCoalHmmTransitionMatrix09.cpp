@@ -1649,7 +1649,7 @@ void IlsCoalHmmTransitionMatrix09::actualizeTransitionMatrix()
   v2_ = pcgtohg(rho1_, rho2_, rho3_, tau1, tau2, theta1, theta2);
 
 
-  if (isnan(s_) || s_ < 0.)
+  if (std::isnan(s_) || s_ < 0.)
   {
     cerr << "DEBUG: s = " << s_ << endl;
     cerr << "rho1 = " << rho1_ << endl;
@@ -1661,7 +1661,7 @@ void IlsCoalHmmTransitionMatrix09::actualizeTransitionMatrix()
     cerr << "theta2  = " << theta2 << endl;
     s_ = 0.;
   }
-  if (isnan(u_) || u_ < 0.)
+  if (std::isnan(u_) || u_ < 0.)
   {
     cerr << "DEBUG: u = " << u_ << endl;
     cerr << "rho1 = " << rho1_ << endl;
@@ -1673,7 +1673,7 @@ void IlsCoalHmmTransitionMatrix09::actualizeTransitionMatrix()
     cerr << "theta2  = " << theta2 << endl;
     u_ = 0.;
   }
-  if (isnan(v1_) || v1_ < 0.)
+  if (std::isnan(v1_) || v1_ < 0.)
   {
     cerr << "DEBUG: v1 = " << v1_ << endl;
     cerr << "rho1 = " << rho1_ << endl;
@@ -1685,7 +1685,7 @@ void IlsCoalHmmTransitionMatrix09::actualizeTransitionMatrix()
     cerr << "theta2  = " << theta2 << endl;
     v1_ = 0.;
   }
-  if (isnan(v2_) || v2_ < 0.)
+  if (std::isnan(v2_) || v2_ < 0.)
   {
     cerr << "DEBUG: v2 = " << v2_ << endl;
     cerr << "rho1    = " << rho1_ << endl;
