@@ -38,7 +38,7 @@ coalmethod=Geneflow(\
   )
 
 //Emission probabilities options:
-model=GTR(a=1.49, b=0.67, c=0.38, d=0.35, e=0.46, theta=0.52, theta1=0.51, theta2=0.57, useObservedFreqs=no)
+model=GTR(a=1.49, b=0.67, c=0.38, d=0.35, e=0.46, theta=0.52, theta1=0.51, theta2=0.57)
 rate_distribution=Uniform
 
 //Now perform analysis:

@@ -1,0 +1,67 @@
+DATA=sim
+
+alphabet=DNA
+
+### Model description
+# for example ILS:
+
+/*coalmethod=ILS(\
+    implementation=09,\
+    implementation=09,\
+    numberOfSpecies=3,\
+    parametrization=1,\
+    species1='H',\
+    species2='C',\
+    species3='G',\
+    outgroup=Outgroup,\
+    tau1=0.004,\
+    tau2=0.0015,\
+    c2=0.010,\
+    theta1=0.002,\
+    theta2=0.002,\
+    median=no,\
+    rho=0.2\
+  )*/
+
+coalmethod=Unclock(\
+  species1='C', error1=0.022, \
+  species2='G', error2=0.033, \
+  model=ILS(\
+    implementation=09,\
+    numberOfSpecies=3,\
+    parametrization=1,\
+    species1='H',\
+    species2='C',\
+    species3='G',\
+    outgroup=Outgroup,\
+    tau1=0.004,\
+    tau2=0.0015,\
+    c2=0.010,\
+    theta1=0.002,\
+    theta2=0.002,\
+    median=no,\
+    rho=0.2,\
+    tau.min = 0.0001,\ #These are the minimum value allowed in optimization. You can play with then if some constraint are matched...
+    theta.min = 0.0001,\
+    rho.min = 0.0001,\
+    rho.max = 1000\
+  ))
+
+
+//Emission probabilities options:
+model=GTR(a=1.49, b=0.67, c=0.38, d=0.35, e=0.46, theta=0.52, theta1=0.51, theta2=0.57)
+rate_distribution=Constant
+
+### Simulation part:
+
+analysis=simulate
+
+# Number of sites to simulate:
+number_of_sites = 500000
+
+# The output file:
+output.sequence.file = sim_hmm.fasta
+# The alignment format:
+# Must be one of Mase, Fasta, Phylip, Clustal, ...
+output.sequence.format = Fasta
+

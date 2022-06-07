@@ -97,7 +97,6 @@ void NonClockAverageCoalHmmStateAlphabet::fireParameterChanged(const ParameterLi
     if (hasSecondError_) {
       Node* node2 = trees_[i]->getNode(speciesWithError2_);
       node2->setDistanceToFather(node2->getDistanceToFather() + error2_);
-      brlenParameters_[i].matchParametersValues(alphabet_->getBranchLengthParametersForState(i));
       brlenParameters_[i].setParameterValue(
           "BrLen" + TextTools::toString(node2->getId()), node2->getDistanceToFather()); 
     }
